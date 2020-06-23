@@ -11,6 +11,7 @@ body{
     background-image: radial-gradient(
             rgba(0, 150, 0, 0.75), black 130%
     );
+    border-radius: 3px;
     height: 20em;
     margin: 0;
     overflow: hidden;
