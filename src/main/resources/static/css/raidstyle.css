@@ -1,18 +1,37 @@
-body{
-    background: linear-gradient(to bottom right, #333333 0%, #151515 100%);
-}
-
-#container{
-    margin: auto;
-    font-family: Inconsolata, serif;
-    color: white;
-    text-shadow: 0 0 2px #C8C8C8;
-    font-size: 1em;
-}
-
 #banner{
+    text-align: center;
     margin: auto;
     width: 50%;
-    border: 3px solid green;
+
+    padding: 10px;
+}
+
+#banner img{
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+}
+
+#team{
+    float:left;
+    width:55%;
+    text-align: center;
+    margin: auto;
+    padding: 10px;
+}
+
+
+#target{
+    float:left;
+    text-align: center;
+    margin: auto;
+    width: 55%;
+    padding: 10px;
+}
+
+#contributions{
+    float:none;
+    text-align: center;
+    margin: auto;
     padding: 10px;
 }
