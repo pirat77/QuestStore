@@ -7,7 +7,6 @@ body{
     border-left: solid #151515;
     border-right: solid #151515;
 }
-
 #siteTitle {
     border: 5px solid #151515;
     background-image: radial-gradient(
@@ -15,11 +14,9 @@ body{
     padding: 1%;
     margin: 0.5%;
 }
-
 .titleElement{
     margin-top: 0.5%;
 }
-
 .elementsList{
     display: flex;
     flex-flow: row wrap;
@@ -29,7 +26,6 @@ body{
     margin-top: 2%;
     list-style: none;
 }
-
 .element{
     border: 5px solid #151515;
     background-image: radial-gradient(
@@ -42,7 +38,6 @@ body{
     font-size: 3em;
     text-align: center;
 }
-
 .button{
     vertical-align: middle;
     border: none;
@@ -50,12 +45,69 @@ body{
     background-color: transparent;
     display: flex;
 }
-
 .button:hover{
         background-image: radial-gradient(
             rgba(0, 150, 0, 1), black 130%);
 }
-
 .buttonMargin{
     margin: 1.5%;
+}
+
+
+.links {
+    font-family: Inconsolata monospace;
+    font-size: 1.1em;
+    color: white;
+    text-shadow: 0 0 5px #C8C8C8;
+    background-color: black;
+    background-image: radial-gradient(
+            rgba(0, 150, 0, 0.75), black 150%
+    );
+    border-bottom: 1px solid #0003;
+    box-shadow: 0 0 32px #0003;
+    font-size: 2em;
+    font-weight: 300;
+}
+.links > a {
+    color: #9ab;
+    padding: .75em;
+    text-align: center;
+    text-decoration: none;
+    transition: all .5s;
+}
+.links > a:hover {
+    background: #ffffff06;
+    color: #adf;
+}
+.links {
+    display: grid;
+    grid-template-columns: repeat(var(--items), 1fr);
+    position: relative;
+}
+.links::before{
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 2;
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+}
+.links:after{
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(18, 16, 16, 0.1);
+    opacity: 0;
+    z-index: 2;
+    pointer-events: none;
+    animation: flicker 0.15s infinite;
 }
