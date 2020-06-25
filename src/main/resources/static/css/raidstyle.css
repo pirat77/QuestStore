@@ -1,0 +1,18 @@
+body{
+    background: linear-gradient(to bottom right, #333333 0%, #151515 100%);
+}
+
+#container{
+    margin: auto;
+    font-family: Inconsolata, serif;
+    color: white;
+    text-shadow: 0 0 2px #C8C8C8;
+    font-size: 1em;
+}
+
+#banner{
+    margin: auto;
+    width: 50%;
+    border: 3px solid green;
+    padding: 10px;
+}
