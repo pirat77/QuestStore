@@ -54,3 +54,7 @@ body{
         background-image: radial-gradient(
             rgba(0, 150, 0, 1), black 130%);
 }
+
+.buttonMargin{
+    margin: 1.5%;
+}
