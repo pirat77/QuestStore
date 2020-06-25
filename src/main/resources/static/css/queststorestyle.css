@@ -8,8 +8,8 @@ body{
     /*border-right: solid #151515;*/
 }
 #siteTitle {
-    border: 5px solid #151515;
-    border-radius: 5px;
+    border: 3px solid #151515;
+    border-radius: 3px;
     background-image: radial-gradient(
         rgba(0, 150, 0, 0.75), black 130%);
     padding: 1%;
