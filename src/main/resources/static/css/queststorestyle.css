@@ -21,6 +21,8 @@ body{
 }
 
 .elementsList{
+    background-image: radial-gradient( rgba(24, 24, 24, 0.75), black 130% );
+    border-top: 1em solid #151515;
     display: flex;
     flex-flow: row wrap;
     justify-content: space-around;
@@ -30,7 +32,7 @@ body{
     list-style: none;
 }
 .element{
-    border: 5px solid #151515;
+    border: 5px solid #262626;
     background-image: radial-gradient(
         rgba(0, 150, 0, 0.75), black 130%);
     padding: 0;
