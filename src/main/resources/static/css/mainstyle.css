@@ -1,5 +1,9 @@
 body{
     background: linear-gradient(to bottom right, #333333 0%, #151515 100%);
+    margin: 0 12% 0 12%;
+    border: 5px;
+    border-left: solid #151515;
+    border-right: solid #151515;
 }
 
 #container{
