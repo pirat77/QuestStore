@@ -27,7 +27,7 @@ body{
     text-shadow: 0 0 5px #C8C8C8;
 }
 
-input, button {
+input {
     border: none;
     background: transparent;
     border-bottom: 1px solid #fff;
@@ -39,11 +39,20 @@ input, button {
     text-shadow: 0 0 5px #C8C8C8;
 }
 
-button {
-    border: 0px solid;
+.button {
+    border: none;
+    background: transparent;
+    border-bottom: 0px solid #fff;
+    outline: none;
+    /*font: 1.3em Inconsolata, monospace;*/
+    font-family: Inconsolata, monospace;
+    font-size: 1.1em;
+    color: white;
+    text-decoration: none;
+    text-shadow: 0 0 5px #C8C8C8;
 }
 
-button:hover {
+.button:hover {
     cursor: pointer;
     color: red;
     text-shadow: 0 0 7px red;
