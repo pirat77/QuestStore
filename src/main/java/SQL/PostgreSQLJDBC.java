@@ -9,7 +9,8 @@ public class PostgreSQLJDBC {
 
     public Connection connect() {
         try {
-            this.connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
+            this.connection = DriverManager.getConnection("jdbc:d5h7521m977spq:ec2-54-228-250-82.eu-west-1.compute.amazonaws.com",
+                    "upvfmzwxkwssvp", "1a029fa503d76d2791558593c69d1a92f76cfb261d2a028d99902439ced533cf");
             System.out.println("Opened database successfully");
 
         } catch (SQLException e) {
