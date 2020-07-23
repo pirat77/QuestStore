@@ -35,9 +35,7 @@ public class QuestDAO  extends SQLDao<Quest> implements Dao<Quest> {
     }
 
     @Override
-    public void insert(Quest quest) {
-        updateRecord(objectToArray(quest));
-    }
+    public void insert(Quest quest) { insertRecord(objectToArray(quest)); }
 
     @Override
     public List<Quest> getObjects(String columnName, String columnValue) {

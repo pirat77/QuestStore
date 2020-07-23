@@ -7,6 +7,16 @@ public abstract class User {
     private String firstName;
     private String lastName;
     private Integer studentId;
+    private boolean isActive;
+
+    public static User getUserByType(int userType){
+        switch (userType){
+            case 1: return new Admin();
+            case 2: return new Mentor();
+            case 3: return new Student();
+        }
+        return new Student();
+    }
 
     public int getId() {
         return id;
@@ -55,4 +65,8 @@ public abstract class User {
     public void setStudentId(Integer studentId) {
         this.studentId = studentId;
     }
+
+    public boolean isActive() { return this.isActive; }
+
+    public void setActive(boolean active) { isActive = active; }
 }
