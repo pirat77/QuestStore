@@ -35,13 +35,13 @@ public abstract class SQLDao<T> {
     }
 
     private void createStatement(String query) throws ClassNotFoundException, SQLException {
-        Class.forName("org.sqlite.JDBC");
+        //Class.forName("org.sqlite.JDBC");
         statement = connection.prepareStatement(query);
     }
 
     private void updateParameters(String[] parameters) throws SQLException {
-        for (int i = 1; i<= parameters.length; i++){
-            this.statement.setString(i, parameters[i]);
+        for (int i = 1; i<=parameters.length; i++){
+            this.statement.setString(i, parameters[i-1]);
         }
     }
 

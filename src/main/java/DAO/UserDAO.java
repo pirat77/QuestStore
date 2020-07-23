@@ -8,7 +8,7 @@ import java.util.List;
 
 public class UserDAO  extends SQLDao<User> implements Dao<User> {
 
-    UserDAO(){
+    public UserDAO(){
         super("users", new String[]{"id", "login", "password", "first_name", "last_name", "is_active", "user_type_id", "student_id"});
     }
 
