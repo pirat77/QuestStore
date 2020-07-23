@@ -9,7 +9,7 @@ public abstract class SQLDao<T> {
     protected String tableName;
     protected PostgreSQLJDBC JDBCInstance;
 
-    SQLDao(String tableName, String[] columnNames) {
+    public SQLDao(String tableName, String[] columnNames) {
         this.tableName = tableName;
         this.columnNames = columnNames;
         JDBCInstance = PostgreSQLJDBC.getInstance();
