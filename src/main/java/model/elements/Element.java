@@ -1,4 +1,4 @@
-package model;
+package model.elements;
 
 public abstract class Element {
     private int id;
@@ -6,15 +6,6 @@ public abstract class Element {
     private String description;
     private int value;
     private int categoryId;
-
-    public Element(int id, String name, String description, int value, int categoryId){
-
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.value = value;
-        this.categoryId = categoryId;
-    }
 
     public void setId(int id) {
         this.id = id;

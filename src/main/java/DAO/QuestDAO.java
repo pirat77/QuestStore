@@ -1,7 +1,7 @@
 package DAO;
 
 import SQL.SQLDao;
-import model.Quest;
+import model.elements.Quest;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
