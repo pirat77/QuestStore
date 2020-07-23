@@ -35,6 +35,7 @@ public abstract class SQLDao<T> {
     }
 
     private void createStatement(String query) throws ClassNotFoundException, SQLException {
+        //TODO: solve redshift problem with prepared statements on postgresql
         Class.forName("org.postgresql.Driver");
         statement = connection.prepareStatement(query);
     }

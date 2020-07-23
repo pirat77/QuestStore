@@ -9,6 +9,8 @@ public abstract class User {
     private Integer studentId;
     private boolean isActive;
 
+    //TODO : create usertype enum
+
     public static User getUserByType(int userType){
         switch (userType){
             case 1: return new Admin();
