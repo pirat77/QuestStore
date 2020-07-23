@@ -26,7 +26,7 @@ public abstract class SQLDao<T> {
             this.connection.close();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            System.out.println("Call sqldblite engineers, there is nothing you can do :)");
+            System.out.println("Call postgreSQL engineers, there is nothing you can do :)");
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Couldn't connect to database, check it's availability or call support");
@@ -35,7 +35,7 @@ public abstract class SQLDao<T> {
     }
 
     private void createStatement(String query) throws ClassNotFoundException, SQLException {
-        //Class.forName("org.sqlite.JDBC");
+        Class.forName("org.postgresql.Driver");
         statement = connection.prepareStatement(query);
     }
 
