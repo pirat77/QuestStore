@@ -1,4 +1,7 @@
 package model;
 
-public class Team {
+public class Team extends Group {
+    public Team(int id, String name) {
+        super(id, name);
+    }
 }
