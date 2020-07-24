@@ -11,7 +11,7 @@ import java.util.List;
 public class ArtifactDAO  extends SQLDao<Artifact> implements Dao<Artifact> {
 
     ArtifactDAO(){
-        super("artifacts", new String[]{});
+        super("artifacts", new String[]{"id", "name", "description", "value", "category_id"});
     }
 
     @Override
