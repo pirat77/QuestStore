@@ -8,12 +8,42 @@ public abstract class SQLDao<T> {
     protected String[] columnNames;
     protected String tableName;
     protected PostgreSQLJDBC JDBCInstance;
+    protected String columnsString;
+    protected String insertString;
+    protected String removeString;
+    protected String selectString;
 
     public SQLDao(String tableName, String[] columnNames) {
         this.tableName = tableName;
         this.columnNames = columnNames;
         JDBCInstance = PostgreSQLJDBC.getInstance();
         connection = JDBCInstance.connect();
+        buildQueryString();
+    }
+
+    private void buildQueryString(){
+        createColumnsString();
+        createInsertString();
+        createRemoveString();
+        createSelectString();
+    }
+
+    private void createSelectString(){ this.selectString = "SELECT * FROM ? WHERE ? LIKE ?"; }
+
+    private void createRemoveString(){ this.removeString = "DELETE FROM ?  WHERE Id =  ? "; }
+
+    private void createColumnsString(){
+        StringBuilder columns = new StringBuilder(" ( ");
+        for (int i=1; i<columnNames.length; i++) { columns.append(", " + columnNames[i]); }
+        columns.append(" ) ");
+        this.columnsString = columns.toString();
+    }
+
+    private void createInsertString() {
+        StringBuilder query = new StringBuilder("INSERT INTO " + this.tableName + this.columnsString + " VALUES ( ? ");
+        for (int i = 1; i < columnNames.length; i++) { query.append(", ?"); }
+        query.append(")");
+        this.insertString = query.toString();
     }
 
     protected ResultSet executeQuery(String query, String[] parameters) {
@@ -55,22 +85,16 @@ public abstract class SQLDao<T> {
     }
 
     protected void removeRecord(String id) {
-        String query = "DELETE FROM ?  WHERE Id =  ? ";
-        executeQuery(query, new String[]{this.tableName, id});
+        executeQuery(this.removeString, new String[]{this.tableName, id});
     }
 
     protected void insertRecord(String[] values) {
-        String columnsString = " ( " + String.join(", " , columnNames) + " ) ";
-        StringBuilder query = new StringBuilder("INSERT INTO " + tableName + columnsString + " VALUES ( ? ");
-        for (int i=1; i<columnNames.length; i++){ query.append(", ?"); }
-        query.append(")");
-        executeQuery(query.toString(), values);
+        executeQuery(this.insertString, values);
     }
 
     protected  ResultSet getRecords(String column, String value){
-        String query = "SELECT * FROM ? WHERE ? LIKE ?";
         String[] parameters = {this.tableName, column, value};
-        return executeQuery(query, parameters);
+        return executeQuery(this.selectString, parameters);
     }
 
     protected abstract String[] objectToArray(T t);
