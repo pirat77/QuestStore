@@ -59,7 +59,7 @@ public class UserDAO  extends SQLDao<User> implements Dao<User> {
                 user.setPassword(resultSet.getString("password"));
                 user.setFirstName(resultSet.getString("first_name"));
                 user.setLastName(resultSet.getString("last_name"));
-                user.setActive(resultSet.getBoolean("isActive"));
+                user.setActive(resultSet.getBoolean("is_active"));
                 user.setStudentId(resultSet.getInt("student_id"));
                 users.add(user);
             }

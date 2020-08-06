@@ -28,9 +28,9 @@ public abstract class SQLDao<T> {
         createSelectString();
     }
 
-    private void createSelectString(){ this.selectString = "SELECT * FROM ? WHERE ? LIKE ?"; }
+    private void createSelectString(){ this.selectString = "SELECT * FROM " + this.tableName + " WHERE ? LIKE ?"; }
 
-    private void createRemoveString(){ this.removeString = "DELETE FROM ?  WHERE Id =  ? "; }
+    private void createRemoveString(){ this.removeString = "DELETE FROM " + this.tableName + "  WHERE Id =  ? "; }
 
     private void createColumnsString(){
         StringBuilder columns = new StringBuilder(" ( ");
@@ -65,7 +65,6 @@ public abstract class SQLDao<T> {
     }
 
     private void createStatement(String query) throws ClassNotFoundException, SQLException {
-        //TODO: solve redshift problem with prepared statements on postgresql
         Class.forName("org.postgresql.Driver");
         statement = connection.prepareStatement(query);
     }
@@ -93,7 +92,7 @@ public abstract class SQLDao<T> {
     }
 
     protected  ResultSet getRecords(String column, String value){
-        String[] parameters = {this.tableName, column, value};
+        String[] parameters = {column, value};
         return executeQuery(this.selectString, parameters);
     }
 
