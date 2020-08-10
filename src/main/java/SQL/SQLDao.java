@@ -46,21 +46,13 @@ public abstract class SQLDao<T> {
         this.insertString = query.toString();
     }
 
-    protected ResultSet executeQuery(String query, String[] parameters) {
-        ResultSet resultSet = null;
-        try {
-            createStatement(query);
-            updateParameters(parameters);
-            this.statement.execute();
-            resultSet = this.statement.getResultSet();
-            this.connection.close();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            System.out.println("Call postgreSQL engineers, there is nothing you can do :)");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Couldn't connect to database, check it's availability or call support");
-        }
+    protected ResultSet executeQuery(String query, String[] parameters) throws SQLException, ClassNotFoundException {
+        ResultSet resultSet;
+        createStatement(query);
+        updateParameters(parameters);
+        this.statement.execute();
+        resultSet = this.statement.getResultSet();
+        this.connection.close();
         return resultSet;
     }
 
@@ -75,7 +67,7 @@ public abstract class SQLDao<T> {
         }
     }
 
-    protected void updateRecord(String[] newValues) {
+    protected void updateRecord(String[] newValues) throws SQLException, ClassNotFoundException {
         String id = newValues[0];
         StringBuilder query = new StringBuilder("UPDATE " + tableName + " SET ");
         for (String column : columnNames) { query.append(column).append(" = ?"); }
@@ -83,15 +75,15 @@ public abstract class SQLDao<T> {
         executeQuery(query.toString(), newValues);
     }
 
-    protected void removeRecord(String id) {
+    protected void removeRecord(String id) throws SQLException, ClassNotFoundException {
         executeQuery(this.removeString, new String[]{this.tableName, id});
     }
 
-    protected void insertRecord(String[] values) {
+    protected void insertRecord(String[] values) throws SQLException, ClassNotFoundException {
         executeQuery(this.insertString, values);
     }
 
-    protected  ResultSet getRecords(String column, String value){
+    protected  ResultSet getRecords(String column, String value) throws SQLException, ClassNotFoundException {
         String[] parameters = {column, value};
         return executeQuery(this.selectString, parameters);
     }
