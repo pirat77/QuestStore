@@ -37,18 +37,18 @@ public class UserDAO  extends SQLDao<User> implements Dao<User> {
     }
 
     @Override
-    public void update(User user) {
+    public void update(User user) throws SQLException, ClassNotFoundException {
         updateRecord(objectToArray(user));
     }
 
     @Override
-    public void remove(User user) { removeRecord(Integer.toString(user.getId())); }
+    public void remove(User user) throws SQLException, ClassNotFoundException { removeRecord(Integer.toString(user.getId())); }
 
     @Override
-    public void insert(User user) { insertRecord(objectToArray(user)); }
+    public void insert(User user) throws SQLException, ClassNotFoundException { insertRecord(objectToArray(user)); }
 
     @Override
-    public List<User> getObjects(String columnName, String columnValue) {
+    public List<User> getObjects(String columnName, String columnValue) throws SQLException, ClassNotFoundException {
         List<User> users = new ArrayList<>();
         ResultSet resultSet = getRecords(columnName, columnValue);
         try {

@@ -25,20 +25,20 @@ public class QuestDAO  extends SQLDao<Quest> implements Dao<Quest> {
     }
 
     @Override
-    public void update(Quest quest) {
+    public void update(Quest quest) throws SQLException, ClassNotFoundException {
         updateRecord(objectToArray(quest));
     }
 
     @Override
-    public void remove(Quest quest) {
+    public void remove(Quest quest) throws SQLException, ClassNotFoundException {
         removeRecord(Integer.toString(quest.getId()));
     }
 
     @Override
-    public void insert(Quest quest) { insertRecord(objectToArray(quest)); }
+    public void insert(Quest quest) throws SQLException, ClassNotFoundException { insertRecord(objectToArray(quest)); }
 
     @Override
-    public List<Quest> getObjects(String columnName, String columnValue) {
+    public List<Quest> getObjects(String columnName, String columnValue) throws SQLException, ClassNotFoundException {
         List<Quest> users = new ArrayList<>();
         ResultSet resultSet = getRecords(columnName, columnValue);
         try {

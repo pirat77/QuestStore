@@ -20,18 +20,18 @@ public class ClassroomDAO  extends SQLDao<Classroom> implements Dao<Classroom> {
     }
 
     @Override
-    public void update(Classroom classroom) {
+    public void update(Classroom classroom) throws SQLException, ClassNotFoundException {
         updateRecord(objectToArray(classroom));
     }
 
     @Override
-    public void remove(Classroom classroom) { removeRecord(Integer.toString(classroom.getId())); }
+    public void remove(Classroom classroom) throws SQLException, ClassNotFoundException { removeRecord(Integer.toString(classroom.getId())); }
 
     @Override
-    public void insert(Classroom classroom) { insertRecord(objectToArray(classroom)); }
+    public void insert(Classroom classroom) throws SQLException, ClassNotFoundException { insertRecord(objectToArray(classroom)); }
 
     @Override
-    public List<Classroom> getObjects(String columnName, String columnValue) {
+    public List<Classroom> getObjects(String columnName, String columnValue) throws SQLException, ClassNotFoundException {
         List<Classroom> classrooms = new ArrayList<>();
         ResultSet resultSet = getRecords(columnName, columnValue);
         try {
