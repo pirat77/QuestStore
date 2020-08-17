@@ -2,10 +2,11 @@ import com.sun.net.httpserver.HttpServer;
 import handler.CookieHandler;
 import handler.LoginHandler;
 import handler.StaticHandler;
-import handler.student.StudentHomepageHandler;
+import handler.student.StudentPagesHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.stream.Stream;
 
 public class App {
     public static void main(String[] args) throws IOException {
@@ -14,10 +15,13 @@ public class App {
 
         server.createContext("/static", new StaticHandler());
         server.createContext("/cookie", new CookieHandler());
-        // Student handlers
-        server.createContext("/login", new LoginHandler());
-        server.createContext("/student/home", new StudentHomepageHandler());
 
+        server.createContext("/login", new LoginHandler());
+
+        // Student handlers -> should be created only if student logs in
+
+        Stream.of("artifact", "home", "quest", "raid", "userprofile", "store").forEach(str -> server.createContext(
+                "/student/" + str, new StudentPagesHandler(str)));
 
         // creates a default executor
         server.setExecutor(null);
