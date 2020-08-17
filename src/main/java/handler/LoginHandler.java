@@ -6,13 +6,13 @@ import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 import service.LoginService;
 
-
 import java.io.*;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
 public class LoginHandler implements HttpHandler {
+
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         LoginService loginService = new LoginService();
