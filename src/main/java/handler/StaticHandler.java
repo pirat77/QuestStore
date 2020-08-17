@@ -37,8 +37,6 @@ public class StaticHandler implements HttpHandler {
     }
 
     private File getFile(String fileId) {
-        System.out.println("." + fileId);
-        System.out.println((new File("./")).getAbsolutePath());
         return new File("./src/main/resources" + fileId);
     }
 }

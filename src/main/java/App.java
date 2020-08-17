@@ -20,7 +20,7 @@ public class App {
 
         // Student handlers -> should be created only if student logs in
 
-        Stream.of("artifact", "home", "quest", "raid", "userprofile", "store").forEach(str -> server.createContext(
+        Stream.of("artifact", "home", "quest", "raid", "student", "store").forEach(str -> server.createContext(
                 "/student/" + str, new StudentPagesHandler(str)));
 
         // creates a default executor

@@ -28,7 +28,7 @@ public class StudentPagesHandler implements HttpHandler {
 //        }
 
 //        String method = httpExchange.getRequestMethod();
-//        StudentDAO studentDAO = new StudentDAO();
+//        StudentDAO studentDAO = new StudentDAO();, "store"
 //        int coins = studentDAO.getStudentCoins(user.getId());
         String method = httpExchange.getRequestMethod();
         String response = "";
