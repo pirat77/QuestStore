@@ -1,4 +1,4 @@
-package handler;
+package handler.student;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
