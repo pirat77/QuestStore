@@ -8,44 +8,66 @@ public abstract class SQLDao<T> {
     protected String[] columnNames;
     protected String tableName;
     protected PostgreSQLJDBC JDBCInstance;
+    protected String columnsString;
+    protected String insertString;
+    protected String removeString;
+    protected String selectString;
 
     public SQLDao(String tableName, String[] columnNames) {
         this.tableName = tableName;
         this.columnNames = columnNames;
         JDBCInstance = PostgreSQLJDBC.getInstance();
         connection = JDBCInstance.connect();
+        buildQueryString();
     }
 
-    protected ResultSet executeQuery(String query, String[] parameters) {
-        ResultSet resultSet = null;
-        try {
-            createStatement(query);
-            updateParameters(parameters);
-            this.statement.execute();
-            resultSet = this.statement.getResultSet();
-            this.connection.close();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            System.out.println("Call sqldblite engineers, there is nothing you can do :)");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Couldn't connect to database, check it's availability or call support");
-        }
+    private void buildQueryString(){
+        createColumnsString();
+        createInsertString();
+        createRemoveString();
+        createSelectString();
+    }
+
+    private void createSelectString(){ this.selectString = "SELECT * FROM " + this.tableName + " WHERE ? LIKE ?"; }
+
+    private void createRemoveString(){ this.removeString = "DELETE FROM " + this.tableName + "  WHERE Id =  ? "; }
+
+    private void createColumnsString(){
+        StringBuilder columns = new StringBuilder(" ( ");
+        for (int i=1; i<columnNames.length; i++) { columns.append(", " + columnNames[i]); }
+        columns.append(" ) ");
+        this.columnsString = columns.toString();
+    }
+
+    private void createInsertString() {
+        StringBuilder query = new StringBuilder("INSERT INTO " + this.tableName + this.columnsString + " VALUES ( ? ");
+        for (int i = 1; i < columnNames.length; i++) { query.append(", ?"); }
+        query.append(")");
+        this.insertString = query.toString();
+    }
+
+    protected ResultSet executeQuery(String query, String[] parameters) throws SQLException, ClassNotFoundException {
+        ResultSet resultSet;
+        createStatement(query);
+        updateParameters(parameters);
+        this.statement.execute();
+        resultSet = this.statement.getResultSet();
+        this.connection.close();
         return resultSet;
     }
 
     private void createStatement(String query) throws ClassNotFoundException, SQLException {
-        Class.forName("org.sqlite.JDBC");
+        Class.forName("org.postgresql.Driver");
         statement = connection.prepareStatement(query);
     }
 
     private void updateParameters(String[] parameters) throws SQLException {
-        for (int i = 1; i<= parameters.length; i++){
-            this.statement.setString(i, parameters[i]);
+        for (int i = 1; i<=parameters.length; i++){
+            this.statement.setString(i, parameters[i-1]);
         }
     }
 
-    protected void updateRecord(String[] newValues) {
+    protected void updateRecord(String[] newValues) throws SQLException, ClassNotFoundException {
         String id = newValues[0];
         StringBuilder query = new StringBuilder("UPDATE " + tableName + " SET ");
         for (String column : columnNames) { query.append(column).append(" = ?"); }
@@ -53,23 +75,17 @@ public abstract class SQLDao<T> {
         executeQuery(query.toString(), newValues);
     }
 
-    protected void removeRecord(String id) {
-        String query = "DELETE FROM ?  WHERE Id =  ? ";
-        executeQuery(query, new String[]{this.tableName, id});
+    protected void removeRecord(String id) throws SQLException, ClassNotFoundException {
+        executeQuery(this.removeString, new String[]{this.tableName, id});
     }
 
-    protected void insertRecord(String[] values) {
-        String columnsString = " ( " + String.join(", " , columnNames) + " ) ";
-        StringBuilder query = new StringBuilder("INSERT INTO " + tableName + columnsString + " VALUES ( ? ");
-        for (int i=1; i<columnNames.length; i++){ query.append(", ?"); }
-        query.append(")");
-        executeQuery(query.toString(), values);
+    protected void insertRecord(String[] values) throws SQLException, ClassNotFoundException {
+        executeQuery(this.insertString, values);
     }
 
-    protected  ResultSet getRecords(String column, String value){
-        String query = "SELECT * FROM ? WHERE ? LIKE ?";
-        String[] parameters = {this.tableName, column, value};
-        return executeQuery(query, parameters);
+    protected  ResultSet getRecords(String column, String value) throws SQLException, ClassNotFoundException {
+        String[] parameters = {column, value};
+        return executeQuery(this.selectString, parameters);
     }
 
     protected abstract String[] objectToArray(T t);
