@@ -8,17 +8,8 @@ public class User {
     private String lastName;
     private Integer studentId;
     private boolean isActive;
+    private Integer userTypeId;
 
-    //TODO : create usertype enum
-
-    public static User getUserByType(int userType){
-        switch (userType){
-            case 1: return new Admin();
-            case 2: return new Mentor();
-            case 3: return new Student();
-        }
-        return new Student();
-    }
 
     public int getId() {
         return id;
@@ -71,4 +62,12 @@ public class User {
     public boolean isActive() { return this.isActive; }
 
     public void setActive(boolean active) { isActive = active; }
+
+    public Integer getUserTypeId() {
+        return userTypeId;
+    }
+
+    public void setUserTypeId(int userTypeId) {
+        this.userTypeId = userTypeId;
+    }
 }

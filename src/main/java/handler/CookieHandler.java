@@ -1,40 +1,91 @@
 package handler;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import helper.CookieHelper;
+import model.Cookie;
+import model.users.User;
+import service.CookieService;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.net.HttpCookie;
-
-public class CookieHandler implements HttpHandler {
-    int counter = 0;
-
-    @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
-        counter++;
-        String response = "Page was visited: " + counter + " times!";
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
 
 
-        String cookieStr = httpExchange.getRequestHeaders().getFirst("Cookie");
-        HttpCookie cookie;
-        boolean isNewSession;
-        if (cookieStr != null) {  // Cookie already exists
-            cookie = HttpCookie.parse(cookieStr).get(0);
-            isNewSession = false;
-        } else { // Create a new cookie
-            cookie = new HttpCookie("sessionId", String.valueOf(counter)); // This isn't a good way to create sessionId. Find out better!
-            isNewSession = true;
-            httpExchange.getResponseHeaders().add("Set-Cookie", cookie.toString());
+public class CookieHandler {
+    final String SESSION_COOKIE_NAME = "session_id";
+    private CookieService cookieService;
+    private CookieHelper cookieHelper;
+
+    public CookieHandler(CookieService cookieService, CookieHelper cookieHelper){
+        this.cookieService = cookieService;
+        this.cookieHelper = cookieHelper;
+    }
+
+    public User checkCookie(HttpExchange httpExchange) throws SQLException, ClassNotFoundException {
+        Optional<HttpCookie> cookieList = getSessionIdCookie(httpExchange);
+        if (cookieList.isPresent()) {  // Cookie already exists
+            System.out.println("Cookie already exists");
+            String cookieSessionId = cookieList.get().getValue();
+            User userToCheck = cookieService.getUserByCookieSessionId(cookieSessionId);
+
+            if (cookieService.checkIfCookieIsActive(cookieSessionId)){
+                return userToCheck;
+            }
         }
+        return null;
+//        else { // Create a new cookie
+//            System.out.println("Cookie is being created");
+//            UUID uuid = UUID.randomUUID();
+//            HttpCookie cookie = new HttpCookie(SESSION_COOKIE_NAME, uuid.toString());
+//            httpExchange.getResponseHeaders().add("Set-Cookie", cookie.toString());
+//            String cookieSessionIdToAdd = uuid.toString();
+//            cookieSessionIdToAdd = '"'+cookieSessionIdToAdd+'"';
+//            Cookie cookieToAdd = new Cookie();
+//            cookieToAdd.setSessionId(cookieSessionIdToAdd);
+//            cookieToAdd.setUserId();
+//            cookieService.addCookie(cookieToAdd);
+//            cookieDAO.putNewCookieToDB(cookieSessionIdToAdd);
+//        }
+//        return null;
+    }
 
-        response += "\n isNewSession: " + isNewSession;
-        response += "\n session id: " + cookie.getValue();
+    public void addCookie(int userId, String sessionId) throws SQLException, ClassNotFoundException {
+        Cookie cookie = new Cookie();
+        cookie.setUserId(userId);
+        cookie.setSessionId(sessionId);
+    }
 
+    public Optional<HttpCookie> getSessionIdCookie(HttpExchange httpExchange){
+        String cookieStr = httpExchange.getRequestHeaders().getFirst("Cookie");
+        List<HttpCookie> cookies = cookieHelper.parseCookies(cookieStr);
+        return cookieHelper.findCookieByName(SESSION_COOKIE_NAME, cookies);
+    }
 
-        httpExchange.sendResponseHeaders(200, response.length());
-        OutputStream os = httpExchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
+//    public void setCookieNewExpireDateToActiveSession(HttpExchange httpExchange) throws SQLException, ClassNotFoundException {
+//        Optional<HttpCookie> cookieList = getSessionIdCookie(httpExchange);
+//        String cookieSessionId = cookieList.get().getValue();
+//        cookieService.setCookieNewExpireDate(cookieSessionId);
+//    }
+    public void setCookieNewExpireDate(String cookieSessionId) throws SQLException, ClassNotFoundException {
+        cookieService.setCookieNewExpireDate(cookieSessionId);
+    }
+
+//    public void setUserIdToCookieInDB(User user, HttpExchange httpExchange) {
+//        Optional<HttpCookie> cookieList = getSessionIdCookie(httpExchange);
+//        String cookieSessionId = cookieList.get().getValue();
+//        int studentId = user.getId();
+//        cookieService.
+//        cookieDAO.putUserIdToCookieInDB(studentId, cookieSessionId);
+//    }
+//
+//    public void logout (HttpExchange httpExchange){
+//        Optional<HttpCookie> cookieList = getSessionIdCookie(httpExchange);
+//        String cookieSessionId = cookieList.get().getValue();
+//        cookieDAO.setCookieForLogout(cookieSessionId);
+//    }
+
+    public String generateCookieSessionId(HttpExchange httpExchange){
+        return cookieService.generateCookieSessionId(httpExchange, SESSION_COOKIE_NAME);
     }
 }

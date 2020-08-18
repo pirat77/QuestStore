@@ -1,6 +1,8 @@
 package DAO;
 import SQL.SQLDao;
 import model.users.User;
+
+import java.net.HttpCookie;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ public class UserDAO  extends SQLDao<User> implements Dao<User> {
         String student_id = Integer.toString(user.getStudentId());
         String user_type_id = "";
         switch (user.getClass().getSimpleName()){
-            case "Studnet":
+            case "Student":
                 user_type_id = "3";
                 break;
             case "Mentor":
@@ -53,13 +55,14 @@ public class UserDAO  extends SQLDao<User> implements Dao<User> {
         ResultSet resultSet = getRecords(columnName, columnValue);
         try {
             while (resultSet.next()) {
-                User user = User.getUserByType(resultSet.getInt("user_type_id"));
+                User user = new User();
                 user.setId(resultSet.getInt("id"));
                 user.setLogin(resultSet.getString("login"));
                 user.setPassword(resultSet.getString("password"));
                 user.setFirstName(resultSet.getString("first_name"));
                 user.setLastName(resultSet.getString("last_name"));
                 user.setActive(resultSet.getBoolean("is_active"));
+                user.setUserTypeId(resultSet.getInt("user_type_id"));
                 user.setStudentId(resultSet.getInt("student_id"));
                 users.add(user);
             }
