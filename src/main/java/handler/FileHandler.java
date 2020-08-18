@@ -7,8 +7,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-public class ImageHandler implements HttpHandler {
+public class FileHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String fileId = exchange.getRequestURI().getPath();
@@ -36,6 +38,13 @@ public class ImageHandler implements HttpHandler {
     }
 
     private File getFile(String fileId) {
-        return new File("./src/main/resources/templates" + fileId);
+        String extension = fileId.substring(fileId.lastIndexOf(".") + 1);
+        ArrayList<String> imageExtension = new ArrayList<String>(Arrays.asList("jpg", "jpeg", "png"));
+        if (extension.equals("css")) {
+            return new File("./src/main/resources" + fileId);
+        } else if (imageExtension.contains(extension)) {
+            return new File("./src/main/resources/templates" + fileId);
+        }
+        return null;
     }
 }

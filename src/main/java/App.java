@@ -1,8 +1,7 @@
 import com.sun.net.httpserver.HttpServer;
 import handler.CookieHandler;
 import handler.LoginHandler;
-import handler.StaticHandler;
-import handler.ImageHandler;
+import handler.FileHandler;
 import handler.student.StudentPagesHandler;
 
 import java.io.IOException;
@@ -14,8 +13,8 @@ public class App {
         // create a server on port 8000
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
 
-        server.createContext("/static", new StaticHandler());
-        server.createContext("/images", new ImageHandler());
+        server.createContext("/static", new FileHandler());
+        server.createContext("/images", new FileHandler());
         server.createContext("/cookie", new CookieHandler());
 
         server.createContext("/login", new LoginHandler());
