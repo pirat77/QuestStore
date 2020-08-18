@@ -2,6 +2,7 @@ import com.sun.net.httpserver.HttpServer;
 import handler.CookieHandler;
 import handler.LoginHandler;
 import handler.StaticHandler;
+import handler.ImageHandler;
 import handler.student.StudentPagesHandler;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ public class App {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
 
         server.createContext("/static", new StaticHandler());
+        server.createContext("/images", new ImageHandler());
         server.createContext("/cookie", new CookieHandler());
 
         server.createContext("/login", new LoginHandler());
