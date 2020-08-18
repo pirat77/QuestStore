@@ -1,15 +1,23 @@
 package service;
 
-import DAO.LoginDAO;
+import DAO.UserDAO;
 import model.users.User;
 
-public class LoginService {
-    LoginDAO loginDAO = new LoginDAO();
+import java.sql.SQLException;
+import java.util.List;
 
-    public boolean loginChecker(String login, String password){
-        User user;
-        user = loginDAO.getUserFromDB(login,password);
-        if (user != null){
+public class LoginService {
+    private UserDAO userDAO;
+
+    public LoginService(UserDAO userDAO){
+        this.userDAO = userDAO;
+    }
+
+    public boolean checkUser(String login, String password) throws SQLException, ClassNotFoundException {
+        List<User> users = userDAO.getObjects("login", login);
+        User userLogin = userDAO.getObjects("login", login).get(0);
+        User userPassword = userDAO.getObjects("password", password).get(0);
+        if (users.size() != 0 && userLogin.getId() == userPassword.getId()){
             return true;
         }
         return false;
