@@ -32,7 +32,7 @@ public abstract class SQLDao<T> {
     private void createRemoveString(){ this.removeString = "DELETE FROM " + this.tableName + "  WHERE Id =  ? "; }
 
     private void createColumnsString(){
-        StringBuilder columns = new StringBuilder(" ( ");https://app.lucidchart.com/documents/edit/ea779a82-10df-49fe-b716-38780decb62c/0_0?beaconFlowId=6B2A9512D3130D31#?folder_id=home&browser=icon
+        StringBuilder columns = new StringBuilder(" ( ");
         for (int i=1; i<columnNames.length; i++) { columns.append(", " + columnNames[i]); }
         columns.append(" ) ");
         this.columnsString = columns.toString();
