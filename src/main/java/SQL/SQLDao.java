@@ -76,7 +76,7 @@ public abstract class SQLDao<T> {
     }
 
     protected void removeRecord(String id) throws SQLException, ClassNotFoundException {
-        executeQuery(this.removeString, new String[]{this.tableName, id});
+        executeQuery(this.removeString, new String[]{id});
     }
 
     protected void insertRecord(String[] values) throws SQLException, ClassNotFoundException {
