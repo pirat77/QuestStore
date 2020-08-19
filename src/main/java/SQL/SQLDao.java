@@ -17,7 +17,6 @@ public abstract class SQLDao<T> {
         this.tableName = tableName;
         this.columnNames = columnNames;
         JDBCInstance = PostgreSQLJDBC.getInstance();
-        //connection = JDBCInstance.connect();
         buildQueryString();
     }
 
@@ -28,12 +27,12 @@ public abstract class SQLDao<T> {
         createSelectString();
     }
 
-    private void createSelectString(){ this.selectString = "SELECT * FROM " + this.tableName + " WHERE ? LIKE ?"; }
+    private void createSelectString(){ this.selectString = "SELECT * FROM " + this.tableName + " WHERE %s LIKE ?"; }
 
     private void createRemoveString(){ this.removeString = "DELETE FROM " + this.tableName + "  WHERE Id =  ? "; }
 
     private void createColumnsString(){
-        StringBuilder columns = new StringBuilder(" ( ");
+        StringBuilder columns = new StringBuilder(" ( ");https://app.lucidchart.com/documents/edit/ea779a82-10df-49fe-b716-38780decb62c/0_0?beaconFlowId=6B2A9512D3130D31#?folder_id=home&browser=icon
         for (int i=1; i<columnNames.length; i++) { columns.append(", " + columnNames[i]); }
         columns.append(" ) ");
         this.columnsString = columns.toString();
@@ -65,6 +64,7 @@ public abstract class SQLDao<T> {
     private void updateParameters(String[] parameters) throws SQLException {
         for (int i = 1; i<=parameters.length; i++){
             this.statement.setString(i, parameters[i-1]);
+            System.out.println(this.statement.toString());
         }
     }
 
@@ -85,8 +85,10 @@ public abstract class SQLDao<T> {
     }
 
     protected  ResultSet getRecords(String column, String value) throws SQLException, ClassNotFoundException {
-        String[] parameters = {column, value};
-        return executeQuery(this.selectString, parameters);
+        String[] parameters = {value};
+        String searchQuery = String.format(this.selectString, column);
+        System.out.println(searchQuery);
+        return executeQuery(searchQuery, parameters);
     }
 
     protected abstract String[] objectToArray(T t);

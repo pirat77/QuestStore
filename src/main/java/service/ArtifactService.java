@@ -20,7 +20,7 @@ public class ArtifactService {
     }
 
     public List<Artifact> getAllArtifact(){
-        return this.artifactDAO.getObjects("id", "%");
+        return this.artifactDAO.getObjects("name", "%");
     }
 
 }
