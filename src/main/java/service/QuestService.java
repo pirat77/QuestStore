@@ -20,7 +20,7 @@ public class QuestService {
     }
 
     public List<Quest> getAllQuest(){
-        return this.questDao.getObjects("id", "%");
+        return this.questDao.getObjects("name", "B%");
     }
 
 }
