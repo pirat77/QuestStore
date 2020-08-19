@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ArtifactDAO  extends SQLDao<Artifact> implements Dao<Artifact> {
 
-    ArtifactDAO(){
+    public ArtifactDAO(){
         super("artifacts", new String[]{"id", "name", "description", "value", "category_id"});
     }
 
@@ -36,10 +36,11 @@ public class ArtifactDAO  extends SQLDao<Artifact> implements Dao<Artifact> {
     public void insert(Artifact artifact) throws SQLException, ClassNotFoundException { insertRecord(objectToArray(artifact)); }
 
     @Override
-    public List<Artifact> getObjects(String columnName, String columnValue) throws SQLException, ClassNotFoundException {
+    public List<Artifact> getObjects(String columnName, String columnValue) {
         List<Artifact> artifacts = new ArrayList<>();
-        ResultSet resultSet = getRecords(columnName, columnValue);
+
         try {
+            ResultSet resultSet = getRecords(columnName, columnValue);
             while (resultSet.next()) {
                 Artifact artifact = new Artifact();
                 artifact.setId(resultSet.getInt("id"));
@@ -51,6 +52,8 @@ public class ArtifactDAO  extends SQLDao<Artifact> implements Dao<Artifact> {
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
         return artifacts;
     }

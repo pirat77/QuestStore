@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Artifacts</title>
-    <link rel="stylesheet" href="../../static/css/mainstyle.css">
-    <link rel="stylesheet" type="text/css" href="../../static/css/queststorestyle.css">
     <nav class="links" style="--items: 6;">
         <a href="homepage.twig"><img src="../images/darkhacknet.png" height="70" width="140"/></a>
         <a href="questpage.twig">quests</a>
@@ -23,11 +21,15 @@
     </div>
     <div>
         <ul class="elementsList">
-            <div class="buttonMargin"><button class="button"><li class="element"> 1 </li></button></div>
-            <div class="buttonMargin"><button class="button"><li class="element"> 2 </li></button></div>
-            <div class="buttonMargin"><button class="button"><li class="element"> 3 </li></button></div>
-            <div class="buttonMargin"><button class="button"><li class="element"> 4 </li></button></div>
-            <div class="buttonMargin"><button class="button"><li class="element"> 5 </li></button></div>
+            {% if (entryList != null) %}
+                {% for entry in entryList %}
+                                <li class="element">
+                                    <p> Name:           {{ entry.name }}        </p>
+                                    <p> Value:          {{ entry.value }}       </p>
+                                    <p> Description:    {{ entry.description }} </p>
+                                </li>
+                {% endfor %}
+            {% endif %}
         </ul>
     </div>
 </div>
