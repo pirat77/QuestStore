@@ -10,7 +10,7 @@ import java.util.List;
 
 public class QuestDAO  extends SQLDao<Quest> implements Dao<Quest> {
 
-    QuestDAO(){
+    public QuestDAO(){
         super("quests", new String[]{"id", "name", "description", "value", "category_id"});
     }
 
@@ -38,10 +38,11 @@ public class QuestDAO  extends SQLDao<Quest> implements Dao<Quest> {
     public void insert(Quest quest) throws SQLException, ClassNotFoundException { insertRecord(objectToArray(quest)); }
 
     @Override
-    public List<Quest> getObjects(String columnName, String columnValue) throws SQLException, ClassNotFoundException {
+    public List<Quest> getObjects(String columnName, String columnValue){
         List<Quest> users = new ArrayList<>();
-        ResultSet resultSet = getRecords(columnName, columnValue);
+
         try {
+            ResultSet resultSet = getRecords(columnName, columnValue);
             while (resultSet.next()) {
                 Quest quest = new Quest();
                 quest.setId(resultSet.getInt("id"));
@@ -53,6 +54,8 @@ public class QuestDAO  extends SQLDao<Quest> implements Dao<Quest> {
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
         return users;
     }
