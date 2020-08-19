@@ -14,12 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginHandler implements HttpHandler {
-    LoginService loginService;
     CookieHandler cookieHandler;
     User user;
 
-    public LoginHandler(LoginService loginService, CookieHandler cookieHandler){
-        this.loginService = loginService;
+    public LoginHandler(CookieHandler cookieHandler){
         this.cookieHandler = cookieHandler;
     }
 
@@ -60,10 +58,9 @@ public class LoginHandler implements HttpHandler {
             String login = inputs.get("login").toString();
             String password = inputs.get("password").toString();
 
-            System.out.println("User:" + login + "Tries to log in");
 
             try {
-                if (loginService.checkUser(login, password)) {
+                if (LoginService.getInstance().checkUser(login, password)) {
                     System.out.println("You logged in");
                     String cookieSessionId = cookieHandler.generateCookieSessionId(httpExchange);
                     cookieHandler.addCookie(user.getId(), cookieSessionId);

@@ -1,11 +1,14 @@
 package helper;
 
+import service.CookieService;
+
 import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class CookieHelper {
+    static CookieService cookieServiceInstance;
 
     public List<HttpCookie> parseCookies(String cookieString){
         List<HttpCookie> cookies = new ArrayList<>();

@@ -7,20 +7,30 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class LoginService {
-    private UserDAO userDAO;
+    UserDAO userDAO;
+    static LoginService loginServiceInstance;
 
-    public LoginService(UserDAO userDAO){
-        this.userDAO = userDAO;
+    LoginService(){
+        this.userDAO = new UserDAO();
+    }
+
+    static public LoginService getInstance(){
+        if (loginServiceInstance != null) return loginServiceInstance;
+        else loginServiceInstance = new LoginService();
+        return loginServiceInstance;
     }
 
     public boolean checkUser(String login, String password) throws SQLException, ClassNotFoundException {
         List<User> users = userDAO.getObjects("login", login);
-        System.out.println(users.get(0).getFirstName());
-        User userLogin = userDAO.getObjects("login", login).get(0);
-        User userPassword = userDAO.getObjects("password", password).get(0);
-        if (users.size() != 0 && userLogin.getId() == userPassword.getId()){
-            return true;
+        System.out.println("User login from db: " + users.get(0).getLogin());
+        if (users.size() != 0) {
+            User user = userDAO.getObjects("login", login).get(0);
+            System.out.println(user.getFirstName() + " tries to log in");
+            if (user.getPassword().equals(password)){
+                return true;
+            }
         }
+        System.out.println("False");
         return false;
     }
 
