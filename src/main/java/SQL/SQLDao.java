@@ -17,7 +17,7 @@ public abstract class SQLDao<T> {
         this.tableName = tableName;
         this.columnNames = columnNames;
         JDBCInstance = PostgreSQLJDBC.getInstance();
-        connection = JDBCInstance.connect();
+        //connection = JDBCInstance.connect();
         buildQueryString();
     }
 
@@ -48,6 +48,7 @@ public abstract class SQLDao<T> {
 
     protected ResultSet executeQuery(String query, String[] parameters) throws SQLException, ClassNotFoundException {
         ResultSet resultSet;
+        this.connection = JDBCInstance.connect(); //tutaj dodalem connection i nie wywala bledow z polaczeniem, ale nadal nic nie zwraca funkcja getObjects();
         createStatement(query);
         updateParameters(parameters);
         this.statement.execute();
@@ -58,6 +59,7 @@ public abstract class SQLDao<T> {
 
     private void createStatement(String query) throws ClassNotFoundException, SQLException {
         Class.forName("org.postgresql.Driver");
+        System.out.println("Query: " + query);
         statement = connection.prepareStatement(query);
     }
 
