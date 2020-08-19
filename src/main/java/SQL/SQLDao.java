@@ -64,7 +64,6 @@ public abstract class SQLDao<T> {
     private void updateParameters(String[] parameters) throws SQLException {
         for (int i = 1; i<=parameters.length; i++){
             this.statement.setString(i, parameters[i-1]);
-            System.out.println(this.statement.toString());
         }
     }
 
@@ -87,7 +86,6 @@ public abstract class SQLDao<T> {
     protected  ResultSet getRecords(String column, String value) throws SQLException, ClassNotFoundException {
         String[] parameters = {value};
         String searchQuery = String.format(this.selectString, column);
-        System.out.println(searchQuery);
         return executeQuery(searchQuery, parameters);
     }
 
