@@ -22,16 +22,18 @@ public class LoginService {
 
     public boolean checkUser(String login, String password) throws SQLException, ClassNotFoundException {
         List<User> users = userDAO.getObjects("login", login);
-        System.out.println("User login from db: " + users.get(0).getLogin());
         if (users.size() != 0) {
             User user = userDAO.getObjects("login", login).get(0);
-            System.out.println(user.getFirstName() + " tries to log in");
             if (user.getPassword().equals(password)){
                 return true;
             }
         }
-        System.out.println("False");
         return false;
+    }
+
+    public User getUser(String login) throws SQLException, ClassNotFoundException {
+        User user = userDAO.getObjects("login", login).get(0);
+        return user;
     }
 
 }

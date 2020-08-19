@@ -2,7 +2,6 @@ package DAO;
 
 import SQL.SQLDao;
 import model.Cookie;
-import model.users.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,12 +10,12 @@ import java.util.List;
 
 public class CookieDAO extends SQLDao<Cookie> implements Dao<Cookie> {
     public CookieDAO() {
-        super("cookies", new String[]{"id", "session_id", "expire_date", "user_id"});
+        super("cookies", new String[]{"session_id", "expire_date", "user_id"});
     }
 
     @Override
     protected String[] objectToArray(Cookie cookie) {
-        return new String[]{String.valueOf(cookie.getId()), cookie.getSessionId(), String.valueOf(cookie.getExpireDate()), String.valueOf(cookie.getUserId())};
+        return new String[]{cookie.getSessionId(), String.valueOf(cookie.getExpireDate()), String.valueOf(cookie.getUserId())};
     }
 
 
@@ -27,7 +26,7 @@ public class CookieDAO extends SQLDao<Cookie> implements Dao<Cookie> {
 
     @Override
     public void remove(Cookie cookie) throws SQLException, ClassNotFoundException {
-        removeRecord(Integer.toString(cookie.getId()));
+        removeRecord(cookie.getSessionId());
     }
 
     @Override
@@ -42,7 +41,6 @@ public class CookieDAO extends SQLDao<Cookie> implements Dao<Cookie> {
         try {
             while (resultSet.next()) {
                 Cookie cookie = null;
-                cookie.setId(resultSet.getInt("id"));
                 cookie.setSessionId(resultSet.getString("session_id"));
                 cookie.setExpireDate(resultSet.getDate("expire_date"));
                 cookie.setUserId(resultSet.getInt("user_id"));

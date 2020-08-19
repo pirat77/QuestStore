@@ -8,6 +8,7 @@ import org.jtwig.JtwigTemplate;
 import service.LoginService;
 
 import java.io.*;
+import java.net.HttpCookie;
 import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -23,7 +24,6 @@ public class LoginHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        user = null;
         try {
             user = cookieHandler.checkCookie(httpExchange);
         } catch (SQLException e) {
@@ -34,15 +34,15 @@ public class LoginHandler implements HttpHandler {
 
         if(user != null){
             if(user.getUserTypeId().equals(3)){
-                httpExchange.getResponseHeaders().add("Location", "/home");
+                httpExchange.getResponseHeaders().add("Location", "/student/home");
                 httpExchange.sendResponseHeaders(303, 0);
             }
             else if(user.getUserTypeId().equals(2)){
-                httpExchange.getResponseHeaders().add("Location", "/mentor");
+                httpExchange.getResponseHeaders().add("Location", "/mentor/home");
                 httpExchange.sendResponseHeaders(303, 0);
             }
             else if(user.getUserTypeId().equals(1)){
-                httpExchange.getResponseHeaders().add("Location", "/admin");
+                httpExchange.getResponseHeaders().add("Location", "/admin/home");
                 httpExchange.sendResponseHeaders(303, 0);
             }
         }
@@ -57,16 +57,43 @@ public class LoginHandler implements HttpHandler {
             Map inputs = parseFormData(formData);
             String login = inputs.get("login").toString();
             String password = inputs.get("password").toString();
-
-
             try {
                 if (LoginService.getInstance().checkUser(login, password)) {
+                    user = LoginService.getInstance().getUser(login);
                     System.out.println("You logged in");
+
                     String cookieSessionId = cookieHandler.generateCookieSessionId(httpExchange);
+                    HttpCookie cookie = new HttpCookie("session_id", cookieSessionId);
+                    httpExchange.getResponseHeaders().add("Set-Cookie", cookie.toString());
+
                     cookieHandler.addCookie(user.getId(), cookieSessionId);
                     cookieHandler.setCookieNewExpireDate(cookieSessionId);
-                    httpExchange.getResponseHeaders().add("Location", "/student/homepage");
-                    httpExchange.sendResponseHeaders(303, 0);
+//                    System.out.println("getting user");
+//                    user = cookieHandler.checkCookie(httpExchange);
+                    System.out.println("User type id: " + user.getUserTypeId());
+                    if(user.getUserTypeId().equals(3)){
+                        httpExchange.getResponseHeaders().add("Location", "/student/home");
+                        httpExchange.sendResponseHeaders(303, 0);
+                    }
+                    else if (user.getUserTypeId().equals(2)){
+                        httpExchange.getResponseHeaders().add("Location", "/mentor/home");
+                        httpExchange.sendResponseHeaders(303, 0);
+                    }
+                    else if (user.getUserTypeId().equals(1)){
+                        httpExchange.getResponseHeaders().add("Location", "/admin/home");
+                        httpExchange.sendResponseHeaders(303, 0);
+                    }
+                }
+                else{
+                    JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/loginpage.twig");
+                    JtwigModel model = JtwigModel.newModel();
+                    response = template.render(model);
+
+                    httpExchange.sendResponseHeaders(200, response.length());
+                    OutputStream os = httpExchange.getResponseBody();
+                    os.write(response.getBytes());
+                    os.close();
+
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -87,14 +114,11 @@ public class LoginHandler implements HttpHandler {
         }
 
         if(method.equals("POST")) {
-
             JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/loginpage.twig");
-
             JtwigModel model = JtwigModel.newModel();
-
+            String wrongInputText = "<p>Wrong login or password</p>";
+            model.with("wrongInputText", wrongInputText);
             response = template.render(model);
-
-            // send the results to a the client
 
             httpExchange.sendResponseHeaders(200, response.length());
             OutputStream os = httpExchange.getResponseBody();

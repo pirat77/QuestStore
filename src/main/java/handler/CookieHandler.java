@@ -1,13 +1,17 @@
 package handler;
 
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import helper.CookieHelper;
 import model.Cookie;
 import model.users.User;
 import service.CookieService;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.HttpCookie;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,38 +26,34 @@ public class CookieHandler {
         this.cookieHelper = cookieHelper;
     }
 
-    public User checkCookie(HttpExchange httpExchange) throws SQLException, ClassNotFoundException {
+    public User checkCookie(HttpExchange httpExchange) throws SQLException, ClassNotFoundException, IOException {
         Optional<HttpCookie> cookieList = getSessionIdCookie(httpExchange);
         if (cookieList.isPresent()) {  // Cookie already exists
-            System.out.println("Cookie already exists");
             String cookieSessionId = cookieList.get().getValue();
-            User userToCheck = cookieService.getUserByCookieSessionId(cookieSessionId);
-
+            System.out.println("Cookie session ID: " + cookieSessionId);
             if (cookieService.checkIfCookieIsActive(cookieSessionId)){
-                return userToCheck;
+                return cookieService.getUserByCookieSessionId(cookieSessionId);
             }
         }
         return null;
-//        else { // Create a new cookie
-//            System.out.println("Cookie is being created");
-//            UUID uuid = UUID.randomUUID();
-//            HttpCookie cookie = new HttpCookie(SESSION_COOKIE_NAME, uuid.toString());
-//            httpExchange.getResponseHeaders().add("Set-Cookie", cookie.toString());
-//            String cookieSessionIdToAdd = uuid.toString();
-//            cookieSessionIdToAdd = '"'+cookieSessionIdToAdd+'"';
-//            Cookie cookieToAdd = new Cookie();
-//            cookieToAdd.setSessionId(cookieSessionIdToAdd);
-//            cookieToAdd.setUserId();
-//            cookieService.addCookie(cookieToAdd);
-//            cookieDAO.putNewCookieToDB(cookieSessionIdToAdd);
-//        }
-//        return null;
+    }
+
+    private void sendResponse(HttpExchange httpExchange, String response) throws IOException {
+        httpExchange.sendResponseHeaders(200, response.length());
+        OutputStream os = httpExchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+
     }
 
     public void addCookie(int userId, String sessionId) throws SQLException, ClassNotFoundException {
         Cookie cookie = new Cookie();
-        cookie.setUserId(userId);
         cookie.setSessionId(sessionId);
+        cookie.setUserId(userId);
+        Date currentDate = cookieService.getCurrentDate();
+        Date expireDate = cookieService.getExpireDate(currentDate);
+        cookie.setExpireDate(expireDate);
+        cookieService.addCookie(cookie);
     }
 
     public Optional<HttpCookie> getSessionIdCookie(HttpExchange httpExchange){
@@ -62,28 +62,10 @@ public class CookieHandler {
         return cookieHelper.findCookieByName(SESSION_COOKIE_NAME, cookies);
     }
 
-//    public void setCookieNewExpireDateToActiveSession(HttpExchange httpExchange) throws SQLException, ClassNotFoundException {
-//        Optional<HttpCookie> cookieList = getSessionIdCookie(httpExchange);
-//        String cookieSessionId = cookieList.get().getValue();
-//        cookieService.setCookieNewExpireDate(cookieSessionId);
-//    }
     public void setCookieNewExpireDate(String cookieSessionId) throws SQLException, ClassNotFoundException {
         cookieService.setCookieNewExpireDate(cookieSessionId);
     }
 
-//    public void setUserIdToCookieInDB(User user, HttpExchange httpExchange) {
-//        Optional<HttpCookie> cookieList = getSessionIdCookie(httpExchange);
-//        String cookieSessionId = cookieList.get().getValue();
-//        int studentId = user.getId();
-//        cookieService.
-//        cookieDAO.putUserIdToCookieInDB(studentId, cookieSessionId);
-//    }
-//
-//    public void logout (HttpExchange httpExchange){
-//        Optional<HttpCookie> cookieList = getSessionIdCookie(httpExchange);
-//        String cookieSessionId = cookieList.get().getValue();
-//        cookieDAO.setCookieForLogout(cookieSessionId);
-//    }
 
     public String generateCookieSessionId(HttpExchange httpExchange){
         return cookieService.generateCookieSessionId(httpExchange, SESSION_COOKIE_NAME);

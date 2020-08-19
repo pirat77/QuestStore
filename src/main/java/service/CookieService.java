@@ -24,31 +24,32 @@ public class CookieService {
 
     public boolean checkIfCookieIsActive(String cookieSessionId) throws SQLException, ClassNotFoundException {
         List<Cookie> cookies = cookieDAO.getObjects("session_id", cookieSessionId);
-        Cookie cookie =  cookieDAO.getObjects("session_id", cookieSessionId).get(0);
-        Date currentDate = getCurrentDate();
-
-        if(cookies.size() == 0){
-            return false;
+        if(cookies.size() != 0){
+            Cookie cookie =  cookies.get(0);
+            Date currentDate = getCurrentDate();
+            if((cookie.getExpireDate().getTime() - currentDate.getTime()) >= 0){
+                return true;
+            }
         }
-        else if ((cookie.getExpireDate().getTime() - currentDate.getTime()) >= 0){
-            return true;
-        }else {
-            return false;
-        }
+        return false;
     }
 
-    private Date getCurrentDate() {
+    public Date getCurrentDate() {
         return new Date(Calendar.getInstance().getTime().getTime());
+    }
+
+    public Date getExpireDate (Date currentDate){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DATE, 1);
+        return new Date(calendar.getTimeInMillis());
     }
 
     public void setCookieNewExpireDate(String cookieSessionId) throws SQLException, ClassNotFoundException {
         Date currentDate = getCurrentDate();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.DATE, 1);
-        Date expireDate = new Date(calendar.getTimeInMillis());
+        Date expireDate = getExpireDate(currentDate);
 
-        Cookie cookie =  cookieDAO.getObjects("session_id", cookieSessionId).get(0);
+        Cookie cookie = cookieDAO.getObjects("session_id", cookieSessionId).get(0);
         cookie.setExpireDate(expireDate);
         cookieDAO.update(cookie);
     }
@@ -68,8 +69,6 @@ public class CookieService {
         UUID uuid = UUID.randomUUID();
         HttpCookie cookie = new HttpCookie(sessionCookieName, uuid.toString());
         httpExchange.getResponseHeaders().add("Set-Cookie", cookie.toString());
-        String cookieSessionIdToAdd = uuid.toString();
-        cookieSessionIdToAdd = '"' + cookieSessionIdToAdd + '"';
-        return cookieSessionIdToAdd;
+        return uuid.toString();
     }
 }
