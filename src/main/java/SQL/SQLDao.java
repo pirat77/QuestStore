@@ -17,7 +17,6 @@ public abstract class SQLDao<T> {
         this.tableName = tableName;
         this.columnNames = columnNames;
         JDBCInstance = PostgreSQLJDBC.getInstance();
-        connection = JDBCInstance.connect();
         buildQueryString();
     }
 
@@ -48,6 +47,7 @@ public abstract class SQLDao<T> {
 
     protected ResultSet executeQuery(String query, String[] parameters) throws SQLException, ClassNotFoundException {
         ResultSet resultSet;
+        this.connection = JDBCInstance.connect();
         createStatement(query);
         updateParameters(parameters);
         this.statement.execute();
