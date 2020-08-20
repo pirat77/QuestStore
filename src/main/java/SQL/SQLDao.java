@@ -7,6 +7,7 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 
 public abstract class SQLDao<T> {
     protected Connection connection;
@@ -18,8 +19,8 @@ public abstract class SQLDao<T> {
     protected String insertString;
     protected String removeString;
     protected String selectString;
-    protected boolean[] isDateFlag;
-    protected boolean[] isIntFlag;
+    protected HashMap<String, Boolean> isDateFlag;
+    protected HashMap<String, Boolean> isIntFlag;
 
     public SQLDao(String tableName, String[] columnNames) {
         this.tableName = tableName;
@@ -30,15 +31,18 @@ public abstract class SQLDao<T> {
     }
 
     private void updateFlags(){
-        this.isIntFlag = new boolean[columnNames.length];
-        this.isDateFlag = new boolean[columnNames.length];
+        this.isIntFlag = new HashMap<>();
+        this.isDateFlag = new HashMap<>();
+
         for (int index = 0; index < columnNames.length; index++) {
-            this.isIntFlag[index] = !columnNames[index].contains("session_id") && columnNames[index].contains("id");
-            System.out.print(this.columnNames[index] + " IntFLAG: " + isDateFlag[index] + " |");
-            this.isDateFlag[index] = columnNames[index].contains("date");
-            System.out.print(this.columnNames[index] + " DateFLAG: " + isDateFlag[index]);
-            System.out.println(" ");
+            this.isIntFlag.put(columnNames[index], !columnNames[index].contains("session_id") && columnNames[index].contains("id"));
+            //System.out.print(index + "." + this.columnNames[index] + " ===> IntFLAG: " + isIntFlag[index] + " |");
+            this.isDateFlag.put(columnNames[index], columnNames[index].contains("date"));
+            //System.out.println(" DateFLAG: " + isDateFlag[index]);
         }
+//        System.out.println(isIntFlag.get("id"));
+//        System.out.println(isIntFlag.get("login"));
+//        System.out.println(isIntFlag.get("password"));
     }
 
     private void buildQueryString(){
@@ -133,9 +137,10 @@ public abstract class SQLDao<T> {
 
 
     private java.sql.Date parseDate(String date){
-        String pattern = "yyyyMMdd HH:mm:ss";
-        Date returnDate = new Date();
+        System.out.println("Input date: " + date);
+        String pattern = "ddMMyyyy HH:mm:ss";
         DateFormat dateFormat = new SimpleDateFormat(pattern);
+        Date returnDate = new Date();
         try {
              returnDate = dateFormat.parse(date);
         }catch (ParseException e){
@@ -145,7 +150,6 @@ public abstract class SQLDao<T> {
     }
 
     private java.sql.Date parseDate(Date date){
-        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        return java.sql.Date.valueOf(localDate);
+        return (java.sql.Date) date;
     }
 }
