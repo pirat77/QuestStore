@@ -10,7 +10,6 @@ import service.LoginService;
 import java.io.*;
 import java.net.HttpCookie;
 import java.net.URLDecoder;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,13 +23,7 @@ public class LoginHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        try {
-            user = cookieHandler.checkCookie(httpExchange);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        user = cookieHandler.checkCookie(httpExchange);
 
         if(user != null){
             if(user.getUserTypeId().equals(3)){
@@ -66,10 +59,7 @@ public class LoginHandler implements HttpHandler {
                 httpExchange.getResponseHeaders().add("Set-Cookie", cookie.toString());
 
                 cookieHandler.addCookie(user.getId(), cookieSessionId);
-                cookieHandler.setCookieNewExpireDate(cookieSessionId);
-//                    System.out.println("getting user");
-//                    user = cookieHandler.checkCookie(httpExchange);
-                System.out.println("User type id: " + user.getUserTypeId());
+
                 if(user.getUserTypeId().equals(3)){
                     httpExchange.getResponseHeaders().add("Location", "/student/home");
                     httpExchange.sendResponseHeaders(303, 0);

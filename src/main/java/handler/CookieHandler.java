@@ -26,7 +26,7 @@ public class CookieHandler {
         this.cookieHelper = cookieHelper;
     }
 
-    public User checkCookie(HttpExchange httpExchange) throws SQLException, ClassNotFoundException {
+    public User checkCookie(HttpExchange httpExchange) {
         Optional<HttpCookie> cookieList = getSessionIdCookie(httpExchange);
         if (cookieList.isPresent()) {  // Cookie already exists
             String cookieSessionId = cookieList.get().getValue();
@@ -52,8 +52,6 @@ public class CookieHandler {
         cookie.setUserId(userId);
         Date currentDate = cookieService.getCurrentDate();
         Date expireDate = cookieService.getExpireDate(currentDate);
-        System.out.println("This is how date to string looks like: " + currentDate.toString());
-        System.out.println(cookieService.formatTime(currentDate));
         cookie.setExpireDate(expireDate);
         cookieService.addCookie(cookie);
     }

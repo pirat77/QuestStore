@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -101,7 +103,7 @@ public abstract class SQLDao<T> {
                 this.statement.setInt(i, Integer.parseInt(parameters[i-1].getColumnValue()));
             }
             if(isDateFlag.get(parameters[i-1].getColumnName())){
-                this.statement.setDate(i, parseDate(parameters[i-1].getColumnValue()));
+                this.statement.setDate(i, java.sql.Date.valueOf(LocalDate.now()));
             }
             System.out.println(statement.toString());
         }
@@ -135,18 +137,15 @@ public abstract class SQLDao<T> {
 
     private java.sql.Date parseDate(String date){
         System.out.println("Input date: " + date);
-        String pattern = "ddMMyyyy HH:mm:ss";
-        DateFormat dateFormat = new SimpleDateFormat(pattern);
-        Date returnDate = new Date();
-        try {
-             returnDate = dateFormat.parse(date);
-        }catch (ParseException e){
-            e.printStackTrace();
-        }
+        String pattern = "yyyyMMdd HH:mm:ss";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        LocalDate returnDate = LocalDate.parse(date, formatter);
+        System.out.println("Return date:" + returnDate);
+        //DateFormat dateFormat = new SimpleDateFormat(pattern);
         return parseDate(returnDate);
     }
 
-    private java.sql.Date parseDate(Date date){
-        return (java.sql.Date) date;
+    private java.sql.Date parseDate(LocalDate date){
+        return java.sql.Date.valueOf(date);
     }
 }
