@@ -1,6 +1,7 @@
 package service;
 
 import DAO.ArtifactDAO;
+import model.Entry;
 import model.elements.Artifact;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class ArtifactService {
     }
 
     public List<Artifact> getAllArtifact(){
-        return this.artifactDAO.getObjects("name", "%");
+        return this.artifactDAO.getObjects(new Entry("name", "%"));
     }
 
 }

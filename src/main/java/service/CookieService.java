@@ -4,12 +4,11 @@ import DAO.CookieDAO;
 import DAO.UserDAO;
 import com.sun.net.httpserver.HttpExchange;
 import model.Cookie;
+import model.Entry;
 import model.users.User;
 
 import java.net.HttpCookie;
-import java.sql.SQLException;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,7 +25,7 @@ public class CookieService {
     }
 
     public boolean checkIfCookieIsActive(String cookieSessionId) {
-        List<Cookie> cookies = cookieDAO.getObjects("session_id", cookieSessionId);
+        List<Cookie> cookies = cookieDAO.getObjects(new Entry("session_id", cookieSessionId));
         if(cookies.size() != 0){
             Cookie cookie =  cookies.get(0);
             Date currentDate = getCurrentDate();
@@ -59,15 +58,15 @@ public class CookieService {
         Date currentDate = getCurrentDate();
         Date expireDate = getExpireDate(currentDate);
 
-        Cookie cookie = cookieDAO.getObjects("session_id", cookieSessionId).get(0);
+        Cookie cookie = cookieDAO.getObjects(new Entry("session_id", cookieSessionId)).get(0);
         cookie.setExpireDate(expireDate);
         cookieDAO.update(cookie);
     }
 
     public User getUserByCookieSessionId(String cookieSessionId) {
-        Cookie cookie =  cookieDAO.getObjects("session_id", cookieSessionId).get(0);
+        Cookie cookie =  cookieDAO.getObjects(new Entry("session_id", cookieSessionId)).get(0);
         String userId = String.valueOf(cookie.getUserId());
-        User user = userDAO.getObjects("id", userId).get(0);
+        User user = userDAO.getObjects(new Entry("id", userId)).get(0);
         return user;
     }
 

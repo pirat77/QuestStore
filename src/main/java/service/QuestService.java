@@ -1,6 +1,7 @@
 package service;
 
 import DAO.QuestDAO;
+import model.Entry;
 import model.elements.Quest;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class QuestService {
     }
 
     public List<Quest> getAllQuest(){
-        return this.questDao.getObjects("name", "B%");
+        return this.questDao.getObjects(new Entry("name", "B%"));
     }
 
 }

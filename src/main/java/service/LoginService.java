@@ -1,6 +1,7 @@
 package service;
 
 import DAO.UserDAO;
+import model.Entry;
 import model.users.User;
 
 import java.util.List;
@@ -20,9 +21,9 @@ public class LoginService {
     }
 
     public boolean checkUser(String login, String password) {
-        List<User> users = userDAO.getObjects("login", login);
+        List<User> users = userDAO.getObjects(new Entry("login", login));
         if (users.size() != 0) {
-            User user = userDAO.getObjects("login", login).get(0);
+            User user = users.get(0);
             if (user.getPassword().equals(password)){
                 return true;
             }
@@ -31,7 +32,7 @@ public class LoginService {
     }
 
     public User getUser(String login) {
-        User user = userDAO.getObjects("login", login).get(0);
+        User user = userDAO.getObjects(new Entry("login", login)).get(0);
         return user;
     }
 
