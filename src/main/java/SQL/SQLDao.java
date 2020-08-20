@@ -34,8 +34,8 @@ public abstract class SQLDao<T> {
         this.isDateFlag = new boolean[columnNames.length];
         for (int index = 0; index < columnNames.length; index++) {
             this.isIntFlag[index] = !columnNames[index].contains("session_id") && columnNames[index].contains("id");
-            System.out.print(this.columnNames[index] + " IntFLAG: " + isDateFlag[index] + " |");
             this.isDateFlag[index] = columnNames[index].contains("date");
+            System.out.print(this.columnNames[index] + " IntFLAG: " + isIntFlag[index] + " |");
             System.out.print(this.columnNames[index] + " DateFLAG: " + isDateFlag[index]);
             System.out.println(" ");
         }
