@@ -16,7 +16,6 @@ import java.util.List;
 
 public class StudentPagesHandler implements HttpHandler {
     User user = null;
-    //CookieHandler cookieHandler = new CookieHandler();
 
     String modelName;
 
@@ -26,15 +25,7 @@ public class StudentPagesHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-//        user = cookieHandler.cookieChecker(httpExchange);
-//        if(user == null || user.getUserType() != 1){
-//            httpExchange.getResponseHeaders().set("Location", "/login");
-//            httpExchange.sendResponseHeaders(303, 0);
-//        }
 
-//        String method = httpExchange.getRequestMethod();
-//        StudentDAO studentDAO = new StudentDAO();, "store"
-//        int coins = studentDAO.getStudentCoins(user.getId());
         String method = httpExchange.getRequestMethod();
         String response = "";
 
