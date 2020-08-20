@@ -3,7 +3,6 @@ package service;
 import DAO.UserDAO;
 import model.users.User;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public class LoginService {
@@ -20,7 +19,7 @@ public class LoginService {
         return loginServiceInstance;
     }
 
-    public boolean checkUser(String login, String password) throws SQLException, ClassNotFoundException {
+    public boolean checkUser(String login, String password) {
         List<User> users = userDAO.getObjects("login", login);
         if (users.size() != 0) {
             User user = userDAO.getObjects("login", login).get(0);
@@ -31,7 +30,7 @@ public class LoginService {
         return false;
     }
 
-    public User getUser(String login) throws SQLException, ClassNotFoundException {
+    public User getUser(String login) {
         User user = userDAO.getObjects("login", login).get(0);
         return user;
     }

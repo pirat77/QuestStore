@@ -5,6 +5,7 @@ import model.groups.Category;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,18 +23,18 @@ public class CategoryDAO  extends SQLDao<Category> implements Dao<Category> {
     }
 
     @Override
-    public void update(Category category) throws SQLException, ClassNotFoundException {
+    public void update(Category category) throws SQLException, ClassNotFoundException, ParseException {
         updateRecord(objectToArray(category));
     }
 
     @Override
-    public void remove(Category category) throws SQLException, ClassNotFoundException { removeRecord(Integer.toString(category.getId())); }
+    public void remove(Category category) throws SQLException, ClassNotFoundException, ParseException { removeRecord(Integer.toString(category.getId())); }
 
     @Override
-    public void insert(Category category) throws SQLException, ClassNotFoundException { insertRecord(objectToArray(category)); }
+    public void insert(Category category) throws SQLException, ClassNotFoundException, ParseException { insertRecord(objectToArray(category)); }
 
     @Override
-    public List<Category> getObjects(String columnName, String columnValue) throws SQLException, ClassNotFoundException {
+    public List<Category> getObjects(String columnName, String columnValue) throws SQLException, ClassNotFoundException, ParseException {
         List<Category> categories = new ArrayList<>();
         ResultSet resultSet = getRecords(columnName, columnValue);
         try {

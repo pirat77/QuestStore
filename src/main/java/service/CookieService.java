@@ -8,6 +8,9 @@ import model.users.User;
 
 import java.net.HttpCookie;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +25,7 @@ public class CookieService {
         this.userDAO = userDAO;
     }
 
-    public boolean checkIfCookieIsActive(String cookieSessionId) throws SQLException, ClassNotFoundException {
+    public boolean checkIfCookieIsActive(String cookieSessionId) {
         List<Cookie> cookies = cookieDAO.getObjects("session_id", cookieSessionId);
         if(cookies.size() != 0){
             Cookie cookie =  cookies.get(0);
@@ -45,7 +48,14 @@ public class CookieService {
         return new Date(calendar.getTimeInMillis());
     }
 
-    public void setCookieNewExpireDate(String cookieSessionId) throws SQLException, ClassNotFoundException {
+    public String formatTime(Date date){
+        String pattern = "dd/MM/yyyy HH:mm:ss";
+        DateFormat dateFormat = new SimpleDateFormat(pattern);
+        String dateString = dateFormat.format(date);
+        return dateString;
+    }
+
+    public void setCookieNewExpireDate(String cookieSessionId) {
         Date currentDate = getCurrentDate();
         Date expireDate = getExpireDate(currentDate);
 
@@ -54,14 +64,14 @@ public class CookieService {
         cookieDAO.update(cookie);
     }
 
-    public User getUserByCookieSessionId(String cookieSessionId) throws SQLException, ClassNotFoundException {
+    public User getUserByCookieSessionId(String cookieSessionId) {
         Cookie cookie =  cookieDAO.getObjects("session_id", cookieSessionId).get(0);
         String userId = String.valueOf(cookie.getUserId());
         User user = userDAO.getObjects("id", userId).get(0);
         return user;
     }
 
-    public void addCookie(Cookie cookie) throws SQLException, ClassNotFoundException {
+    public void addCookie(Cookie cookie) {
         cookieDAO.insert(cookie);
     }
 

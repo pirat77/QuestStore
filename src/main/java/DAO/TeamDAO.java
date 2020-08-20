@@ -5,6 +5,7 @@ import model.groups.Team;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,16 +23,16 @@ public class TeamDAO  extends SQLDao<Team> implements Dao<Team> {
     }
 
     @Override
-    public void update(Team team) throws SQLException, ClassNotFoundException { updateRecord(objectToArray(team)); }
+    public void update(Team team) throws SQLException, ClassNotFoundException, ParseException { updateRecord(objectToArray(team)); }
 
     @Override
-    public void remove(Team team) throws SQLException, ClassNotFoundException { removeRecord(Integer.toString(team.getId())); }
+    public void remove(Team team) throws SQLException, ClassNotFoundException, ParseException { removeRecord(Integer.toString(team.getId())); }
 
     @Override
-    public void insert(Team team) throws SQLException, ClassNotFoundException { insertRecord(objectToArray(team)); }
+    public void insert(Team team) throws SQLException, ClassNotFoundException, ParseException { insertRecord(objectToArray(team)); }
 
     @Override
-    public List<Team> getObjects(String columnName, String columnValue) throws SQLException, ClassNotFoundException {
+    public List<Team> getObjects(String columnName, String columnValue) throws SQLException, ClassNotFoundException, ParseException {
         List<Team> teams = new ArrayList<>();
         ResultSet resultSet = getRecords(columnName, columnValue);
         try {

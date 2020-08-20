@@ -25,15 +25,15 @@ public class ArtifactDAO  extends SQLDao<Artifact> implements Dao<Artifact> {
     }
 
     @Override
-    public void update(Artifact artifact) throws SQLException, ClassNotFoundException {
+    public void update(Artifact artifact) {
         updateRecord(objectToArray(artifact));
     }
 
     @Override
-    public void remove(Artifact artifact) throws SQLException, ClassNotFoundException { removeRecord(Integer.toString(artifact.getId())); }
+    public void remove(Artifact artifact) { removeRecord(Integer.toString(artifact.getId())); }
 
     @Override
-    public void insert(Artifact artifact) throws SQLException, ClassNotFoundException { insertRecord(objectToArray(artifact)); }
+    public void insert(Artifact artifact) { insertRecord(objectToArray(artifact)); }
 
     @Override
     public List<Artifact> getObjects(String columnName, String columnValue) {
@@ -52,8 +52,6 @@ public class ArtifactDAO  extends SQLDao<Artifact> implements Dao<Artifact> {
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
         return artifacts;
     }

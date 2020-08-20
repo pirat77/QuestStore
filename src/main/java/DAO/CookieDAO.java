@@ -5,6 +5,9 @@ import model.Cookie;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,27 +18,29 @@ public class CookieDAO extends SQLDao<Cookie> implements Dao<Cookie> {
 
     @Override
     protected String[] objectToArray(Cookie cookie) {
-        return new String[]{cookie.getSessionId(), String.valueOf(cookie.getExpireDate()), String.valueOf(cookie.getUserId())};
+        String pattern = "yyyyMMdd HH:mm:ss";
+        DateFormat dateFormat = new SimpleDateFormat(pattern);
+        return new String[]{cookie.getSessionId(), dateFormat.format(cookie.getExpireDate()), String.valueOf(cookie.getUserId())};
     }
 
 
     @Override
-    public void update(Cookie cookie) throws SQLException, ClassNotFoundException {
+    public void update(Cookie cookie) {
         updateRecord(objectToArray(cookie));
     }
 
     @Override
-    public void remove(Cookie cookie) throws SQLException, ClassNotFoundException {
+    public void remove(Cookie cookie) {
         removeRecord(cookie.getSessionId());
     }
 
     @Override
-    public void insert(Cookie cookie) throws SQLException, ClassNotFoundException {
+    public void insert(Cookie cookie) {
         insertRecord(objectToArray(cookie));
     }
 
     @Override
-    public List<Cookie> getObjects(String columnName, String columnValue) throws SQLException, ClassNotFoundException {
+    public List<Cookie> getObjects(String columnName, String columnValue) {
         List<Cookie> cookies = new ArrayList<>();
         ResultSet resultSet = getRecords(columnName, columnValue);
         try {

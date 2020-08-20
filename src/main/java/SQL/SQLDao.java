@@ -1,6 +1,12 @@
 package SQL;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public abstract class SQLDao<T> {
     protected Connection connection;
@@ -12,12 +18,27 @@ public abstract class SQLDao<T> {
     protected String insertString;
     protected String removeString;
     protected String selectString;
+    protected boolean[] isDateFlag;
+    protected boolean[] isIntFlag;
 
     public SQLDao(String tableName, String[] columnNames) {
         this.tableName = tableName;
         this.columnNames = columnNames;
+        updateFlags();
         JDBCInstance = PostgreSQLJDBC.getInstance();
         buildQueryString();
+    }
+
+    private void updateFlags(){
+        this.isIntFlag = new boolean[columnNames.length];
+        this.isDateFlag = new boolean[columnNames.length];
+        for (int index = 0; index < columnNames.length; index++) {
+            this.isIntFlag[index] = !columnNames[index].contains("session_id") && columnNames[index].contains("id");
+            System.out.print(this.columnNames[index] + " IntFLAG: " + isDateFlag[index] + " |");
+            this.isDateFlag[index] = columnNames[index].contains("date");
+            System.out.print(this.columnNames[index] + " DateFLAG: " + isDateFlag[index]);
+            System.out.println(" ");
+        }
     }
 
     private void buildQueryString(){
@@ -32,7 +53,7 @@ public abstract class SQLDao<T> {
     private void createRemoveString(){ this.removeString = "DELETE FROM " + this.tableName + "  WHERE Id =  ? "; }
 
     private void createColumnsString(){
-        StringBuilder columns = new StringBuilder(" ( ");https://app.lucidchart.com/documents/edit/ea779a82-10df-49fe-b716-38780decb62c/0_0?beaconFlowId=6B2A9512D3130D31#?folder_id=home&browser=icon
+        StringBuilder columns = new StringBuilder(" ( " + columnNames[0]); //https://app.lucidchart.com/documents/edit/ea779a82-10df-49fe-b716-38780decb62c/0_0?beaconFlowId=6B2A9512D3130D31#?folder_id=home&browser=icon
         for (int i=1; i<columnNames.length; i++) { columns.append(", " + columnNames[i]); }
         columns.append(" ) ");
         this.columnsString = columns.toString();
@@ -45,14 +66,22 @@ public abstract class SQLDao<T> {
         this.insertString = query.toString();
     }
 
-    protected ResultSet executeQuery(String query, String[] parameters) throws SQLException, ClassNotFoundException {
-        ResultSet resultSet;
-        this.connection = JDBCInstance.connect();
-        createStatement(query);
-        updateParameters(parameters);
-        this.statement.execute();
-        resultSet = this.statement.getResultSet();
-        this.connection.close();
+    protected ResultSet executeQuery(String query, String[] parameters) {
+        ResultSet resultSet = null;
+        try{
+            this.connection = JDBCInstance.connect();
+            createStatement(query);
+            updateParameters(parameters);
+            this.statement.execute();
+            resultSet = this.statement.getResultSet();
+            this.connection.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        //todo exeptions
         return resultSet;
     }
 
@@ -63,12 +92,21 @@ public abstract class SQLDao<T> {
 
     private void updateParameters(String[] parameters) throws SQLException {
         for (int i = 1; i<=parameters.length; i++){
-            this.statement.setString(i, parameters[i-1]);
-            System.out.println(this.statement.toString());
+            if (!isIntFlag[i-1] && !isDateFlag[i-1]){
+                this.statement.setString(i, parameters[i-1]);
+            }
+            if(isIntFlag[i-1]){
+                System.out.println("PARAMETRY:" + parameters[i-1]);
+                this.statement.setInt(i, Integer.parseInt(parameters[i-1]));
+            }
+            if(isDateFlag[i-1]){
+                this.statement.setDate(i, parseDate(parameters[i-1]));
+            }
+            System.out.println(statement.toString());
         }
     }
 
-    protected void updateRecord(String[] newValues) throws SQLException, ClassNotFoundException {
+    protected void updateRecord(String[] newValues) {
         String id = newValues[0];
         StringBuilder query = new StringBuilder("UPDATE " + tableName + " SET ");
         for (String column : columnNames) { query.append(column).append(" = ?"); }
@@ -76,15 +114,15 @@ public abstract class SQLDao<T> {
         executeQuery(query.toString(), newValues);
     }
 
-    protected void removeRecord(String id) throws SQLException, ClassNotFoundException {
+    protected void removeRecord(String id) {
         executeQuery(this.removeString, new String[]{this.tableName, id});
     }
 
-    protected void insertRecord(String[] values) throws SQLException, ClassNotFoundException {
+    protected void insertRecord(String[] values) {
         executeQuery(this.insertString, values);
     }
 
-    protected  ResultSet getRecords(String column, String value) throws SQLException, ClassNotFoundException {
+    protected  ResultSet getRecords(String column, String value) {
         String[] parameters = {value};
         String searchQuery = String.format(this.selectString, column);
         System.out.println(searchQuery);
@@ -92,4 +130,22 @@ public abstract class SQLDao<T> {
     }
 
     protected abstract String[] objectToArray(T t);
+
+
+    private java.sql.Date parseDate(String date){
+        String pattern = "yyyyMMdd HH:mm:ss";
+        Date returnDate = new Date();
+        DateFormat dateFormat = new SimpleDateFormat(pattern);
+        try {
+             returnDate = dateFormat.parse(date);
+        }catch (ParseException e){
+            e.printStackTrace();
+        }
+        return parseDate(returnDate);
+    }
+
+    private java.sql.Date parseDate(Date date){
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return java.sql.Date.valueOf(localDate);
+    }
 }

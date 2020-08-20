@@ -25,17 +25,17 @@ public class QuestDAO  extends SQLDao<Quest> implements Dao<Quest> {
     }
 
     @Override
-    public void update(Quest quest) throws SQLException, ClassNotFoundException {
+    public void update(Quest quest) {
         updateRecord(objectToArray(quest));
     }
 
     @Override
-    public void remove(Quest quest) throws SQLException, ClassNotFoundException {
+    public void remove(Quest quest) {
         removeRecord(Integer.toString(quest.getId()));
     }
 
     @Override
-    public void insert(Quest quest) throws SQLException, ClassNotFoundException { insertRecord(objectToArray(quest)); }
+    public void insert(Quest quest) { insertRecord(objectToArray(quest)); }
 
     @Override
     public List<Quest> getObjects(String columnName, String columnValue){
@@ -54,8 +54,6 @@ public class QuestDAO  extends SQLDao<Quest> implements Dao<Quest> {
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
         return users;
     }

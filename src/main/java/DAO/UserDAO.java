@@ -5,6 +5,7 @@ import model.users.User;
 import java.net.HttpCookie;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,18 +40,18 @@ public class UserDAO  extends SQLDao<User> implements Dao<User> {
     }
 
     @Override
-    public void update(User user) throws SQLException, ClassNotFoundException {
+    public void update(User user) {
         updateRecord(objectToArray(user));
     }
 
     @Override
-    public void remove(User user) throws SQLException, ClassNotFoundException { removeRecord(Integer.toString(user.getId())); }
+    public void remove(User user) { removeRecord(Integer.toString(user.getId())); }
 
     @Override
-    public void insert(User user) throws SQLException, ClassNotFoundException { insertRecord(objectToArray(user)); }
+    public void insert(User user) { insertRecord(objectToArray(user)); }
 
     @Override
-    public List<User> getObjects(String columnName, String columnValue) throws SQLException, ClassNotFoundException {
+    public List<User> getObjects(String columnName, String columnValue) {
         List<User> users = new ArrayList<>();
         ResultSet resultSet = getRecords(columnName, columnValue);
         try {
