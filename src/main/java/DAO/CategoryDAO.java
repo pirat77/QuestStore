@@ -1,6 +1,7 @@
 package DAO;
 
 import SQL.SQLDao;
+import model.Entry;
 import model.groups.Category;
 
 import java.sql.ResultSet;
@@ -16,10 +17,10 @@ public class CategoryDAO  extends SQLDao<Category> implements Dao<Category> {
     }
 
     @Override
-    protected String[] objectToArray(Category category) {
-        String id = Integer.toString(category.getId());
-        String name =  category.getName();
-        return new String[]{id, name};
+    protected Entry[] objectToArray(Category category) {
+        Entry id = new Entry("id", Integer.toString(category.getId()));
+        Entry name = new Entry("name", category.getName());
+        return new Entry[]{id, name};
     }
 
     @Override
@@ -28,15 +29,16 @@ public class CategoryDAO  extends SQLDao<Category> implements Dao<Category> {
     }
 
     @Override
-    public void remove(Category category) throws SQLException, ClassNotFoundException, ParseException { removeRecord(Integer.toString(category.getId())); }
+    public void remove(Category category) throws SQLException, ClassNotFoundException, ParseException {
+        removeRecord(new Entry("id", Integer.toString(category.getId()))); }
 
     @Override
     public void insert(Category category) throws SQLException, ClassNotFoundException, ParseException { insertRecord(objectToArray(category)); }
 
     @Override
-    public List<Category> getObjects(String columnName, String columnValue) throws SQLException, ClassNotFoundException, ParseException {
+    public List<Category> getObjects(Entry entry) throws SQLException, ClassNotFoundException, ParseException {
         List<Category> categories = new ArrayList<>();
-        ResultSet resultSet = getRecords(columnName, columnValue);
+        ResultSet resultSet = getRecords(entry);
         try {
             while (resultSet.next()) {
                 Category category = new Category();

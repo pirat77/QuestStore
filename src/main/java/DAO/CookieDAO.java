@@ -2,11 +2,11 @@ package DAO;
 
 import SQL.SQLDao;
 import model.Cookie;
+import model.Entry;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +17,13 @@ public class CookieDAO extends SQLDao<Cookie> implements Dao<Cookie> {
     }
 
     @Override
-    protected String[] objectToArray(Cookie cookie) {
+    protected Entry[] objectToArray(Cookie cookie) {
         String pattern = "yyyyMMdd HH:mm:ss";
         DateFormat dateFormat = new SimpleDateFormat(pattern);
-        return new String[]{cookie.getSessionId(), dateFormat.format(cookie.getExpireDate()), String.valueOf(cookie.getUserId())};
+        Entry session_id = new Entry("session_id", cookie.getSessionId());
+        Entry expire_date = new Entry("expire_date", dateFormat.format(cookie.getExpireDate()));
+        Entry user_id = new Entry("user_id", String.valueOf(cookie.getUserId()));
+        return new Entry[]{session_id, expire_date, user_id};
     }
 
 
@@ -31,7 +34,7 @@ public class CookieDAO extends SQLDao<Cookie> implements Dao<Cookie> {
 
     @Override
     public void remove(Cookie cookie) {
-        removeRecord(cookie.getSessionId());
+        removeRecord(new Entry("id", cookie.getSessionId()));
     }
 
     @Override
@@ -40,9 +43,9 @@ public class CookieDAO extends SQLDao<Cookie> implements Dao<Cookie> {
     }
 
     @Override
-    public List<Cookie> getObjects(String columnName, String columnValue) {
+    public List<Cookie> getObjects(Entry entry) {
         List<Cookie> cookies = new ArrayList<>();
-        ResultSet resultSet = getRecords(columnName, columnValue);
+        ResultSet resultSet = getRecords(entry);
         try {
             while (resultSet.next()) {
                 Cookie cookie = null;

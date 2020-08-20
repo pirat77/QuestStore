@@ -1,12 +1,15 @@
 package SQL;
 
-import java.sql.*;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
+import model.Entry;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 public abstract class SQLDao<T> {
@@ -33,16 +36,10 @@ public abstract class SQLDao<T> {
     private void updateFlags(){
         this.isIntFlag = new HashMap<>();
         this.isDateFlag = new HashMap<>();
-
-        for (int index = 0; index < columnNames.length; index++) {
-            this.isIntFlag.put(columnNames[index], !columnNames[index].contains("session_id") && columnNames[index].contains("id"));
-            //System.out.print(index + "." + this.columnNames[index] + " ===> IntFLAG: " + isIntFlag[index] + " |");
-            this.isDateFlag.put(columnNames[index], columnNames[index].contains("date"));
-            //System.out.println(" DateFLAG: " + isDateFlag[index]);
+        for (String column: columnNames) {
+            this.isIntFlag.put(column, !column.contains("session_id") && column.contains("id"));
+            this.isDateFlag.put(column, column.contains("date"));
         }
-//        System.out.println(isIntFlag.get("id"));
-//        System.out.println(isIntFlag.get("login"));
-//        System.out.println(isIntFlag.get("password"));
     }
 
     private void buildQueryString(){
@@ -57,7 +54,7 @@ public abstract class SQLDao<T> {
     private void createRemoveString(){ this.removeString = "DELETE FROM " + this.tableName + "  WHERE Id =  ? "; }
 
     private void createColumnsString(){
-        StringBuilder columns = new StringBuilder(" ( " + columnNames[0]); //https://app.lucidchart.com/documents/edit/ea779a82-10df-49fe-b716-38780decb62c/0_0?beaconFlowId=6B2A9512D3130D31#?folder_id=home&browser=icon
+        StringBuilder columns = new StringBuilder(" ( " + columnNames[0]);
         for (int i=1; i<columnNames.length; i++) { columns.append(", " + columnNames[i]); }
         columns.append(" ) ");
         this.columnsString = columns.toString();
@@ -70,7 +67,7 @@ public abstract class SQLDao<T> {
         this.insertString = query.toString();
     }
 
-    protected ResultSet executeQuery(String query, String[] parameters) {
+    protected ResultSet executeQuery(String query, Entry[] parameters) {
         ResultSet resultSet = null;
         try{
             this.connection = JDBCInstance.connect();
@@ -94,46 +91,46 @@ public abstract class SQLDao<T> {
         statement = connection.prepareStatement(query);
     }
 
-    private void updateParameters(String[] parameters) throws SQLException {
+    private void updateParameters(Entry[] parameters) throws SQLException {
         for (int i = 1; i<=parameters.length; i++){
-            if (!isIntFlag[i-1] && !isDateFlag[i-1]){
-                this.statement.setString(i, parameters[i-1]);
+            if (!isIntFlag.get(parameters[i-1].getColumnName()) && !isDateFlag.get(parameters[i-1].getColumnName())){
+                this.statement.setString(i, parameters[i-1].getColumnValue());
             }
-            if(isIntFlag[i-1]){
+            if(isIntFlag.get(parameters[i-1].getColumnName())){
                 System.out.println("PARAMETRY:" + parameters[i-1]);
-                this.statement.setInt(i, Integer.parseInt(parameters[i-1]));
+                this.statement.setInt(i, Integer.parseInt(parameters[i-1].getColumnValue()));
             }
-            if(isDateFlag[i-1]){
-                this.statement.setDate(i, parseDate(parameters[i-1]));
+            if(isDateFlag.get(parameters[i-1].getColumnName())){
+                this.statement.setDate(i, parseDate(parameters[i-1].getColumnValue()));
             }
             System.out.println(statement.toString());
         }
     }
 
-    protected void updateRecord(String[] newValues) {
-        String id = newValues[0];
+    protected void updateRecord(Entry[] newValues) {
+        String id = newValues[0].getColumnValue();
         StringBuilder query = new StringBuilder("UPDATE " + tableName + " SET ");
         for (String column : columnNames) { query.append(column).append(" = ?"); }
         query.append(" WHERE Id = ").append(id).append(";");
         executeQuery(query.toString(), newValues);
     }
 
-    protected void removeRecord(String id) {
-        executeQuery(this.removeString, new String[]{this.tableName, id});
+    protected void removeRecord(Entry id) {
+        executeQuery(this.removeString, new Entry[]{id});
     }
 
-    protected void insertRecord(String[] values) {
+    protected void insertRecord(Entry[] values) {
         executeQuery(this.insertString, values);
     }
 
-    protected  ResultSet getRecords(String column, String value) {
-        String[] parameters = {value};
-        String searchQuery = String.format(this.selectString, column);
+    protected  ResultSet getRecords(Entry entry){
+        Entry[] parameters = new Entry[]{entry};
+        String searchQuery = String.format(this.selectString, entry.getColumnName());
         System.out.println(searchQuery);
         return executeQuery(searchQuery, parameters);
     }
 
-    protected abstract String[] objectToArray(T t);
+    protected abstract Entry[] objectToArray(T t);
 
 
     private java.sql.Date parseDate(String date){

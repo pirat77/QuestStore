@@ -1,6 +1,7 @@
 package DAO;
 
 import SQL.SQLDao;
+import model.Entry;
 import model.elements.Quest;
 
 import java.sql.ResultSet;
@@ -15,13 +16,13 @@ public class QuestDAO  extends SQLDao<Quest> implements Dao<Quest> {
     }
 
     @Override
-    protected String[] objectToArray(Quest quest) {
-        String id = Integer.toString(quest.getId());
-        String name = quest.getName();
-        String description = quest.getDescription();
-        String value = Integer.toString(quest.getValue());
-        String category_id = Integer.toString(quest.getCategoryId());
-        return new String[]{id, name, description, value, category_id};
+    protected Entry[] objectToArray(Quest quest) {
+        Entry id =  new Entry("id", Integer.toString(quest.getId()));
+        Entry name = new Entry("name", quest.getName());
+        Entry description = new Entry("description", quest.getDescription());
+        Entry value = new Entry("value", Integer.toString(quest.getValue()));
+        Entry category_id = new Entry("category_id", Integer.toString(quest.getCategoryId()));
+        return new Entry[]{id, name, description, value, category_id};
     }
 
     @Override
@@ -31,18 +32,18 @@ public class QuestDAO  extends SQLDao<Quest> implements Dao<Quest> {
 
     @Override
     public void remove(Quest quest) {
-        removeRecord(Integer.toString(quest.getId()));
+        removeRecord(new Entry("id", Integer.toString(quest.getId())));
     }
 
     @Override
     public void insert(Quest quest) { insertRecord(objectToArray(quest)); }
 
     @Override
-    public List<Quest> getObjects(String columnName, String columnValue){
+    public List<Quest> getObjects(Entry entry){
         List<Quest> users = new ArrayList<>();
 
         try {
-            ResultSet resultSet = getRecords(columnName, columnValue);
+            ResultSet resultSet = getRecords(entry);
             while (resultSet.next()) {
                 Quest quest = new Quest();
                 quest.setId(resultSet.getInt("id"));
