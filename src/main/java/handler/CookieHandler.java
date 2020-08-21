@@ -1,7 +1,6 @@
 package handler;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import helper.CookieHelper;
 import model.Cookie;
 import model.users.User;
@@ -10,7 +9,6 @@ import service.CookieService;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpCookie;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +29,7 @@ public class CookieHandler {
         if (cookieList.isPresent()) {  // Cookie already exists
             String cookieSessionId = cookieList.get().getValue();
             cookieSessionId = cookieSessionId.substring(1, cookieSessionId.length()-1);
-            if (cookieService.checkIfCookieIsActive(cookieSessionId)){
+            if (cookieService.isCookieIsActive(cookieSessionId)){
                 return cookieService.getUserByCookieSessionId(cookieSessionId);
             }
         }

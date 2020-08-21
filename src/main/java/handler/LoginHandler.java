@@ -24,25 +24,11 @@ public class LoginHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         user = cookieHandler.checkCookie(httpExchange);
-        System.out.println("Password" + user);
         if(user != null){
-            System.out.println("LOGIN" + user.getLogin());
-            if(user.getUserTypeId().equals(3)){
-                httpExchange.getResponseHeaders().add("Location", "/student/home");
-                httpExchange.sendResponseHeaders(303, 0);
-            }
-            else if(user.getUserTypeId().equals(2)){
-                httpExchange.getResponseHeaders().add("Location", "/mentor/home");
-                httpExchange.sendResponseHeaders(303, 0);
-            }
-            else if(user.getUserTypeId().equals(1)){
-                httpExchange.getResponseHeaders().add("Location", "/admin/home");
-                httpExchange.sendResponseHeaders(303, 0);
-            }
+            checkUser(httpExchange);
         }
 
         String method = httpExchange.getRequestMethod();
-        String response;
 
         if(method.equals("POST")){
             InputStreamReader isr = new InputStreamReader(httpExchange.getRequestBody(), "utf-8");
@@ -61,58 +47,58 @@ public class LoginHandler implements HttpHandler {
 
                 cookieHandler.addCookie(user.getId(), cookieSessionId);
 
-                if(user.getUserTypeId().equals(3)){
-                    httpExchange.getResponseHeaders().add("Location", "/student/home");
-                    httpExchange.sendResponseHeaders(303, 0);
-                }
-                else if (user.getUserTypeId().equals(2)){
-                    httpExchange.getResponseHeaders().add("Location", "/mentor/home");
-                    httpExchange.sendResponseHeaders(303, 0);
-                }
-                else if (user.getUserTypeId().equals(1)){
-                    httpExchange.getResponseHeaders().add("Location", "/admin/home");
-                    httpExchange.sendResponseHeaders(303, 0);
-                }
+                checkUser(httpExchange);
             }
             else{
-                JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/loginpage.twig");
-                JtwigModel model = JtwigModel.newModel();
-                String wrongInputText = "<p>Wrong login or password</p>";
-                model.with("wrongInputText", wrongInputText);
-                response = template.render(model);
-
-                httpExchange.sendResponseHeaders(200, response.length());
-                OutputStream os = httpExchange.getResponseBody();
-                os.write(response.getBytes());
-                os.close();
+                String wrongInputText = "<p>Incorrect login or password</p>";
+                getResponse("templates.loginpage/twig", wrongInputText, httpExchange);
 
             }
         }
 
         if (method.equals("GET")){
-            JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/loginpage.twig");
-            JtwigModel model = JtwigModel.newModel();
-            response = template.render(model);
-
-            httpExchange.sendResponseHeaders(200, response.length());
-            OutputStream os = httpExchange.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
+            getResponse("templates/loginpage.twig", "", httpExchange);
         }
 
         if(method.equals("POST")) {
-            JtwigTemplate template = JtwigTemplate.classpathTemplate("templates/loginpage.twig");
-            JtwigModel model = JtwigModel.newModel();
-            String wrongInputText = "<p>Wrong login or password</p>";
-            model.with("wrongInputText", wrongInputText);
-            response = template.render(model);
-
-            httpExchange.sendResponseHeaders(200, response.length());
-            OutputStream os = httpExchange.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
+            String wrongInputText = "<p>Incorrect login or password</p>";
+            getResponse("templates.loginpage/twig", wrongInputText, httpExchange);
         }
 
+    }
+
+    private void checkUser(HttpExchange httpExchange) throws IOException {
+        if(user.getUserTypeId().equals(3)){
+            httpExchange.getResponseHeaders().add("Location", "/student/home");
+            httpExchange.sendResponseHeaders(303, 0);
+        }
+        else if (user.getUserTypeId().equals(2)){
+            httpExchange.getResponseHeaders().add("Location", "/mentor/home");
+            httpExchange.sendResponseHeaders(303, 0);
+        }
+        else if (user.getUserTypeId().equals(1)){
+            httpExchange.getResponseHeaders().add("Location", "/admin/home");
+            httpExchange.sendResponseHeaders(303, 0);
+        }
+    }
+
+    private void getResponse(String path, String wrongInputText, HttpExchange httpExchange) throws IOException {
+        String response = modelResponse(path, wrongInputText);
+        sendResponse(response, httpExchange);
+    }
+
+    private void sendResponse(String response, HttpExchange httpExchange) throws IOException {
+        httpExchange.sendResponseHeaders(200, response.length());
+        OutputStream os = httpExchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+
+    private String modelResponse(String path, String wrongInputText){
+        JtwigTemplate template = JtwigTemplate.classpathTemplate(path);
+        JtwigModel model = JtwigModel.newModel();
+        model.with("wrongInputText", wrongInputText);
+        return template.render(model);
     }
 
     private static Map<String, String> parseFormData(String formData) throws UnsupportedEncodingException {
@@ -120,7 +106,6 @@ public class LoginHandler implements HttpHandler {
         String[] pairs = formData.split("&");
         for(String pair : pairs){
             String[] keyValue = pair.split("=");
-            // We have to decode the value because it's urlencoded. see: https://en.wikipedia.org/wiki/POST_(HTTP)#Use_for_submitting_web_forms
             String value = new URLDecoder().decode(keyValue[1], "UTF-8");
             map.put(keyValue[0], value);
         }

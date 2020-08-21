@@ -24,7 +24,7 @@ public class CookieService {
         this.userDAO = userDAO;
     }
 
-    public boolean checkIfCookieIsActive(String cookieSessionId) {
+    public boolean isCookieIsActive(String cookieSessionId) {
         List<Cookie> cookies = cookieDAO.getObjects(new Entry("session_id", cookieSessionId));
         if(cookies.size() != 0){
             Cookie cookie =  cookies.get(0);
