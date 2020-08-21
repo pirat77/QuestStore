@@ -30,7 +30,7 @@ public class CookieHandler {
         Optional<HttpCookie> cookieList = getSessionIdCookie(httpExchange);
         if (cookieList.isPresent()) {  // Cookie already exists
             String cookieSessionId = cookieList.get().getValue();
-            System.out.println("Cookie session ID: " + cookieSessionId);
+            cookieSessionId = cookieSessionId.substring(1, cookieSessionId.length()-1);
             if (cookieService.checkIfCookieIsActive(cookieSessionId)){
                 return cookieService.getUserByCookieSessionId(cookieSessionId);
             }

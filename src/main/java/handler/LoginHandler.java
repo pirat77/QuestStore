@@ -24,8 +24,9 @@ public class LoginHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         user = cookieHandler.checkCookie(httpExchange);
-
+        System.out.println("Password" + user);
         if(user != null){
+            System.out.println("LOGIN" + user.getLogin());
             if(user.getUserTypeId().equals(3)){
                 httpExchange.getResponseHeaders().add("Location", "/student/home");
                 httpExchange.sendResponseHeaders(303, 0);

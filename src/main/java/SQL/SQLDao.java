@@ -6,12 +6,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.HashMap;
 
 public abstract class SQLDao<T> {
@@ -99,7 +95,6 @@ public abstract class SQLDao<T> {
                 this.statement.setString(i, parameters[i-1].getColumnValue());
             }
             if(isIntFlag.get(parameters[i-1].getColumnName())){
-                System.out.println("PARAMETRY:" + parameters[i-1]);
                 this.statement.setInt(i, Integer.parseInt(parameters[i-1].getColumnValue()));
             }
             if(isDateFlag.get(parameters[i-1].getColumnName())){

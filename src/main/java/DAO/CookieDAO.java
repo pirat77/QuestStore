@@ -48,7 +48,7 @@ public class CookieDAO extends SQLDao<Cookie> implements Dao<Cookie> {
         ResultSet resultSet = getRecords(entry);
         try {
             while (resultSet.next()) {
-                Cookie cookie = null;
+                Cookie cookie = new Cookie();
                 cookie.setSessionId(resultSet.getString("session_id"));
                 cookie.setExpireDate(resultSet.getDate("expire_date"));
                 cookie.setUserId(resultSet.getInt("user_id"));
