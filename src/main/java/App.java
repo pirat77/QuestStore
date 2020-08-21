@@ -2,6 +2,7 @@ import DAO.CookieDAO;
 import DAO.UserDAO;
 import com.sun.net.httpserver.HttpServer;
 import handler.CookieHandler;
+import handler.FileHandler;
 import handler.LoginHandler;
 import handler.StaticHandler;
 import handler.student.StudentPagesHandler;
@@ -24,7 +25,8 @@ public class App {
         // create a server on port 8000
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
 
-        server.createContext("/static", new StaticHandler());
+        server.createContext("/static", new FileHandler());
+        server.createContext("/images", new FileHandler());
 
         server.createContext("/login", new LoginHandler(cookieHandler));
 
