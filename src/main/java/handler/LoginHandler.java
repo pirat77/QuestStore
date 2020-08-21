@@ -50,19 +50,16 @@ public class LoginHandler implements HttpHandler {
                 checkUser(httpExchange);
             }
             else{
-                String wrongInputText = "<p>Incorrect login or password</p>";
-                getResponse("templates.loginpage/twig", wrongInputText, httpExchange);
-
+                getResponse("templates/loginpage/twig", true, httpExchange);
             }
         }
 
         if (method.equals("GET")){
-            getResponse("templates/loginpage.twig", "", httpExchange);
+            getResponse("templates/loginpage.twig", false, httpExchange);
         }
 
         if(method.equals("POST")) {
-            String wrongInputText = "<p>Incorrect login or password</p>";
-            getResponse("templates.loginpage/twig", wrongInputText, httpExchange);
+            getResponse("templates/loginpage/twig", true, httpExchange);
         }
 
     }
@@ -82,8 +79,8 @@ public class LoginHandler implements HttpHandler {
         }
     }
 
-    private void getResponse(String path, String wrongInputText, HttpExchange httpExchange) throws IOException {
-        String response = modelResponse(path, wrongInputText);
+    private void getResponse(String path, boolean isWrongInput, HttpExchange httpExchange) throws IOException {
+        String response = modelResponse(path, isWrongInput);
         sendResponse(response, httpExchange);
     }
 
@@ -94,10 +91,15 @@ public class LoginHandler implements HttpHandler {
         os.close();
     }
 
-    private String modelResponse(String path, String wrongInputText){
+    private String modelResponse(String path, boolean isWrongInput){
+
         JtwigTemplate template = JtwigTemplate.classpathTemplate(path);
         JtwigModel model = JtwigModel.newModel();
-        model.with("wrongInputText", wrongInputText);
+        if (isWrongInput){
+            String wrongInputText = "<p>Incorrect login or password</p>";
+            //todo - fix twig modelling
+            model.with("wrongInputText", wrongInputText);
+        }
         return template.render(model);
     }
 
