@@ -10,6 +10,7 @@ import service.LoginService;
 import java.io.*;
 import java.net.HttpCookie;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class LoginHandler implements HttpHandler {
         String[] pairs = formData.split("&");
         for (String pair : pairs) {
             String[] keyValue = pair.split("=");
-            String value = new URLDecoder().decode(keyValue[1], "UTF-8");
+            String value = URLDecoder.decode(keyValue[1], "UTF-8");
             map.put(keyValue[0], value);
         }
         return map;
@@ -41,12 +42,12 @@ public class LoginHandler implements HttpHandler {
         String method = httpExchange.getRequestMethod();
 
         if (method.equals("POST")) {
-            InputStreamReader isr = new InputStreamReader(httpExchange.getRequestBody(), "utf-8");
+            InputStreamReader isr = new InputStreamReader(httpExchange.getRequestBody(), StandardCharsets.UTF_8);
             BufferedReader br = new BufferedReader(isr);
             String formData = br.readLine();
-            Map inputs = parseFormData(formData);
-            String login = inputs.get("login").toString();
-            String password = inputs.get("password").toString();
+            Map<String, String> inputs = parseFormData(formData);
+            String login = inputs.get("login");
+            String password = inputs.get("password");
             if (LoginService.getInstance().checkUser(login, password)) {
                 user = LoginService.getInstance().getUser(login);
                 System.out.println("You logged in");
@@ -64,9 +65,6 @@ public class LoginHandler implements HttpHandler {
         }
         if (method.equals("GET")) {
             getResponse("templates/loginpage.twig", false, httpExchange);
-        }
-        if (method.equals("POST")) {
-            getResponse("templates/loginpage/twig", true, httpExchange);
         }
     }
 
