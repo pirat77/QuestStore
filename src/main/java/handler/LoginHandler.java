@@ -60,7 +60,7 @@ public class LoginHandler implements HttpHandler {
 
                 checkUser(httpExchange);
             } else {
-                getResponse("templates/loginpage/twig", true, httpExchange);
+                getResponse("templates/loginpage.twig", true, httpExchange);
             }
         }
         if (method.equals("GET")) {
