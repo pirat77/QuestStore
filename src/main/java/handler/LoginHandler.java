@@ -44,7 +44,7 @@ public class LoginHandler implements HttpHandler {
     public void handle(HttpExchange httpExchange) throws IOException {
         user = cookieHandler.checkCookie(httpExchange);
         if (user != null) {
-            checkUser(httpExchange);
+            redirectToUserSpecificPage(httpExchange);
         }
         String method = httpExchange.getRequestMethod();
 
@@ -65,7 +65,7 @@ public class LoginHandler implements HttpHandler {
 
                 cookieHandler.addCookie(user.getId(), cookieSessionId);
 
-                checkUser(httpExchange);
+                redirectToUserSpecificPage(httpExchange);
             } else {
                 getResponse("templates/loginpage.twig", true, httpExchange);
             }
@@ -75,7 +75,7 @@ public class LoginHandler implements HttpHandler {
         }
     }
 
-    private void checkUser(HttpExchange httpExchange) throws IOException {
+    private void redirectToUserSpecificPage(HttpExchange httpExchange) throws IOException {
         if (user.getUserTypeId().equals(3)) {
             httpExchange.getResponseHeaders().add("Location", "/student/home");
             httpExchange.sendResponseHeaders(303, 0);
