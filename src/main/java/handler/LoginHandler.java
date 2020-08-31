@@ -15,10 +15,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginHandler implements HttpHandler {
+    private final LoginService loginService;
     CookieHandler cookieHandler;
     User user;
 
     public LoginHandler(CookieHandler cookieHandler) {
+        this.loginService = LoginService.getInstance();
+        this.cookieHandler = cookieHandler;
+    }
+
+    public LoginHandler(CookieHandler cookieHandler, LoginService loginService) {
+        this.loginService = loginService;
         this.cookieHandler = cookieHandler;
     }
 
@@ -48,8 +55,8 @@ public class LoginHandler implements HttpHandler {
             Map<String, String> inputs = parseFormData(formData);
             String login = inputs.get("login");
             String password = inputs.get("password");
-            if (LoginService.getInstance().checkUser(login, password)) {
-                user = LoginService.getInstance().getUser(login);
+            if (loginService.checkUser(login, password)) {
+                user = loginService.getUser(login);
                 System.out.println("You logged in");
 
                 String cookieSessionId = cookieHandler.generateCookieSessionId(httpExchange);
