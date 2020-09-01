@@ -67,7 +67,7 @@ public class CookieServiceTest {
                 calendar.get(Calendar.DAY_OF_MONTH),
                 calendar.get(Calendar.MONTH) + 1,
                 calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.HOUR),
+                calendar.get(Calendar.HOUR_OF_DAY),
                 calendar.get(Calendar.MINUTE),
                 calendar.get(Calendar.SECOND));
         assertEquals(formattedDate, cookieService.formatTime(date));
@@ -114,11 +114,11 @@ public class CookieServiceTest {
     }
 
     @Test
-    public void should_GenerateAndAddCookieSessionIdToHttpExchange_WhenInvokeGenerateCookieSessionId() {
+    public void should_GenerateAndAddCookieSession_WhenInvokeGenerateCookieSessionIdAndAddToResponse() {
         HttpExchange httpExchange = mock(HttpExchange.class);
         Headers headers = spy(Headers.class);
         when(httpExchange.getResponseHeaders()).thenReturn(headers);
-        String uuid = cookieService.generateCookieSessionId(httpExchange, "sessionCookieName");
+        String uuid = cookieService.generateCookieSessionIdAndAddToResponse(httpExchange, "sessionCookieName");
         assertNotNull(uuid);
         assertNotNull(headers.getFirst("Set-Cookie"));
     }
