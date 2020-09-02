@@ -45,4 +45,8 @@ public class PostgreSQLJDBC {
             e.printStackTrace();
         }
     }
+
+    public Connection getConnection() {
+        return connection;
+    }
 }
