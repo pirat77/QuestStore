@@ -50,7 +50,7 @@ public class LoginHandler implements HttpHandler {
                 checkUser(httpExchange);
             }
             else{
-                getResponse("templates/loginpage/twig", true, httpExchange);
+                getResponse("templates/loginpage.twig", true, httpExchange);
             }
         }
 
@@ -59,7 +59,7 @@ public class LoginHandler implements HttpHandler {
         }
 
         if(method.equals("POST")) {
-            getResponse("templates/loginpage/twig", true, httpExchange);
+            getResponse("templates/loginpage.twig", true, httpExchange);
         }
 
     }
