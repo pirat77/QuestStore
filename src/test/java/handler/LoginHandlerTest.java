@@ -18,6 +18,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -112,8 +113,10 @@ class LoginHandlerTest {
 
         loginHandler.handle(httpExchange);
 
-        assertEquals("session_id=\"someSessionId\"", headers.get("Set-Cookie").get(0));
-        assertEquals("/student/home", headers.get("Location").get(0));
+        assertAll(
+                () -> assertEquals("session_id=\"someSessionId\"", headers.get("Set-Cookie").get(0)),
+                () -> assertEquals("/student/home", headers.get("Location").get(0))
+        );
 
         verify(cookieHandler, times(1)).generateCookieSessionId(httpExchange);
         verify(httpExchange, times(2)).getResponseHeaders();
