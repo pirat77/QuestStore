@@ -29,12 +29,12 @@ public class LoginHandler implements HttpHandler {
         this.cookieHandler = cookieHandler;
     }
 
-    private static Map<String, String> parseFormData(String formData) throws UnsupportedEncodingException {
+    private static Map<String, String> parseFormData(String formData) {
         Map<String, String> map = new HashMap<>();
         String[] pairs = formData.split("&");
         for (String pair : pairs) {
             String[] keyValue = pair.split("=");
-            String value = URLDecoder.decode(keyValue[1], "UTF-8");
+            String value = URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8);
             map.put(keyValue[0], value);
         }
         return map;
@@ -45,6 +45,7 @@ public class LoginHandler implements HttpHandler {
         user = cookieHandler.checkCookie(httpExchange);
         if (user != null) {
             redirectToUserSpecificPage(httpExchange);
+            return;
         }
         String method = httpExchange.getRequestMethod();
 
