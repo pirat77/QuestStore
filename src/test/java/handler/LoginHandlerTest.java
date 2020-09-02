@@ -80,9 +80,10 @@ class LoginHandlerTest {
 
         loginHandler.handle(httpExchange);
 
-        assertEquals(path, headers.get("Location").get(0));
-
-        verify(httpExchange, times(1)).sendResponseHeaders(303, 0);
+        assertAll(
+                () -> assertEquals(path, headers.get("Location").get(0)),
+                () -> verify(httpExchange, times(1)).sendResponseHeaders(303, 0)
+        );
     }
 
     @Test
@@ -95,10 +96,12 @@ class LoginHandlerTest {
         user = null;
         loginHandler.handle(httpExchange);
 
-        verify(httpExchange, times(1)).getRequestMethod();
-        verify(httpExchange, times(1)).sendResponseHeaders(200, 656);
-        verify(outputStream, times(1)).write(any());
-        verify(outputStream, times(1)).close();
+        assertAll(
+                () -> verify(httpExchange, times(1)).getRequestMethod(),
+                () -> verify(httpExchange, times(1)).sendResponseHeaders(200, 656),
+                () -> verify(outputStream, times(1)).write(any()),
+                () -> verify(outputStream, times(1)).close()
+        );
     }
 
     @Test
@@ -115,13 +118,12 @@ class LoginHandlerTest {
 
         assertAll(
                 () -> assertEquals("session_id=\"someSessionId\"", headers.get("Set-Cookie").get(0)),
-                () -> assertEquals("/student/home", headers.get("Location").get(0))
+                () -> assertEquals("/student/home", headers.get("Location").get(0)),
+                () -> verify(cookieHandler, times(1)).generateCookieSessionId(httpExchange),
+                () -> verify(httpExchange, times(2)).getResponseHeaders(),
+                () -> verify(cookieHandler, times(1)).addCookie(1, "someSessionId"),
+                () -> verify(httpExchange, times(1)).sendResponseHeaders(303, 0)
         );
-
-        verify(cookieHandler, times(1)).generateCookieSessionId(httpExchange);
-        verify(httpExchange, times(2)).getResponseHeaders();
-        verify(cookieHandler, times(1)).addCookie(1, "someSessionId");
-        verify(httpExchange, times(1)).sendResponseHeaders(303, 0);
     }
 
     @Test
@@ -136,9 +138,11 @@ class LoginHandlerTest {
 
         loginHandler.handle(httpExchange);
 
-        verify(httpExchange, times(1)).sendResponseHeaders(200, 690);
-        verify(outputStream, times(1)).write(any());
-        verify(outputStream, times(1)).close();
+        assertAll(
+                () -> verify(httpExchange, times(1)).sendResponseHeaders(200, 690),
+                () -> verify(outputStream, times(1)).write(any()),
+                () -> verify(outputStream, times(1)).close()
+        );
     }
 
     //=========== private methods ===========
@@ -173,6 +177,14 @@ class LoginHandlerTest {
                 "</body>\n" +
                 "</html>";
         should_RenderResponse_WhenCalledWithLoginPageTwig(expected, false);
+    }
+
+    void should_RenderResponse_WhenCalledWithLoginPageTwig(String expected, boolean isWrongInput) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Method modelResponse = LoginHandler.class.getDeclaredMethod("modelResponse", String.class, boolean.class);
+        modelResponse.setAccessible(true);
+        String actual = (String) modelResponse.invoke(loginHandler, "templates/loginpage.twig", isWrongInput);
+
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -217,6 +229,14 @@ class LoginHandlerTest {
         should_ReturnStringMap_WhenCalledWithLoginAndPasswordString(expected, formData);
     }
 
+    void should_ReturnStringMap_WhenCalledWithLoginAndPasswordString(Map<String, String> expected, String formData) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Method modelResponse = LoginHandler.class.getDeclaredMethod("parseFormData", String.class);
+        modelResponse.setAccessible(true);
+        Object actual = modelResponse.invoke(loginHandler, formData);
+
+        assertEquals(expected, actual);
+    }
+
     @Test
     @DisplayName("Not implemented functionality")
     @Disabled
@@ -239,21 +259,6 @@ class LoginHandlerTest {
         expected.put("login", "jasio");
 
         should_ReturnStringMap_WhenCalledWithLoginAndPasswordString(expected, formData);
-    }
-
-    void should_ReturnStringMap_WhenCalledWithLoginAndPasswordString(Map<String, String> expected, String formData) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method modelResponse = LoginHandler.class.getDeclaredMethod("parseFormData", String.class);
-        modelResponse.setAccessible(true);
-        Object actual = modelResponse.invoke(loginHandler, formData);
-
-        assertEquals(expected, actual);
-    }
-
-    void should_RenderResponse_WhenCalledWithLoginPageTwig(String expected, boolean isWrongInput) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method modelResponse = LoginHandler.class.getDeclaredMethod("modelResponse", String.class, boolean.class);
-        modelResponse.setAccessible(true);
-        String actual = (String) modelResponse.invoke(loginHandler, "templates/loginpage.twig", isWrongInput);
-        assertEquals(expected, actual);
     }
 
     static class UserFactory {
