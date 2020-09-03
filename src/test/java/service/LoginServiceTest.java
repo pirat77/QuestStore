@@ -3,36 +3,33 @@ package service;
 import DAO.UserDAO;
 import model.Entry;
 import model.users.User;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class LoginServiceTest {
-
     private String password = "jasio";
     private String login = "jasio";
     private LoginService loginService;
-    private Entry properEntry;
-    private Entry invalidEntry;
-    private User user;
+    private static Entry properEntry;
+    private static Entry invalidEntry;
+    private static User user;
 
     @Mock
     private UserDAO mockUserDAO;
 
-    @BeforeEach
-    public void setUp() {
+    @BeforeAll
+    static void setUp() {
         properEntry = new Entry("login","jasio");
         invalidEntry = new Entry("login","invalidLogin");
         user = new User();
@@ -44,9 +41,10 @@ class LoginServiceTest {
         user.setStudentId(1);
         user.setActive(true);
         user.setUserTypeId(3);
-//        List<User> listWithExpectedUser = Collections.singletonList(user);
-//        when(mockUserDAO.getObjects(properEntry)).thenReturn(listWithExpectedUser);
-//        when(mockUserDAO.getObjects(any()).thenReturn(Collections.emptyList()));
+    }
+
+    @BeforeEach
+    public void set() {
         loginService = LoginService.getTestInstance(mockUserDAO);
     }
 
