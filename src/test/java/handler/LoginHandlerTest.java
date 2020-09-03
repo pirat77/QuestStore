@@ -50,13 +50,6 @@ class LoginHandlerTest {
         loginHandler = new LoginHandler(cookieHandler, loginService);
     }
 
-    @AfterEach
-    void tearDown() {
-        user = null;
-        headers = null;
-        loginHandler = null;
-    }
-
     @Test
     void should_RedirectToStudent_WhenMethodIsGetAndStudentInCookie() throws IOException {
         UserFactory.setStudent();
@@ -93,7 +86,6 @@ class LoginHandlerTest {
         when(httpExchange.getResponseBody()).thenReturn(outputStream);
         when(cookieHandler.checkCookie(httpExchange)).thenReturn(null);
 
-        user = null;
         loginHandler.handle(httpExchange);
 
         assertAll(
