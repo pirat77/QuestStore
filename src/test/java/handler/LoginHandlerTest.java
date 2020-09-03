@@ -22,6 +22,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+/**
+ * LoginHandlerTest covers 100% code in LoginHandler mostly through public handle method,
+ * and checking if mocked loginService, and cookieHandler has been called with appropriate
+ * parameters. Moreover two private methods are tested using reflection - parseFormData,
+ * and modelResponse. Tests showed, that parseFormData doesn't work properly if parsed
+ * data contains signs "&", and "=". It should be checked at front end side if values
+ * provided by user contains those signs.
+ */
 @ExtendWith(MockitoExtension.class)
 class LoginHandlerTest {
     @Mock

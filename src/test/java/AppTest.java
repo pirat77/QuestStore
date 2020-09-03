@@ -14,6 +14,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+/**
+ * AppTest tests if all methods required to set context, and start server are called
+ * with appropriate arguments. It covers 47% of code in App.
+ */
 @ExtendWith(MockitoExtension.class)
 class AppTest {
     @Mock

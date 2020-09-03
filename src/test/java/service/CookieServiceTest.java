@@ -18,6 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * CookieServiceTest checks all methods which CookieService contains and covers
+ * the whole code. Code refactoring involved a few little changes in methods'
+ * implementation and renaming a signature. The method "formatTime" is never used.
+ * The rest of the code is written correctly. There is no need to override the
+ * constructor to inject dependencies. The whole code is easy to read and understand.
+ */
 public class CookieServiceTest {
 
     private CookieDAO cookieDAO;

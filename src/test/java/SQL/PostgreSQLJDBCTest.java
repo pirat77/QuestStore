@@ -7,6 +7,12 @@ import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * In PostgreSQLJDBCTest a correct connection to the database is being checked,
+ * as well as its disconnection. Tests cover 75% of the code.
+ *
+ * The code refactor contained only a small code extension that was meant to be testable.
+ */
 public class PostgreSQLJDBCTest {
 
     private PostgreSQLJDBC postgreSQLJDBC;
