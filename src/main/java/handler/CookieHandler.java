@@ -66,6 +66,6 @@ public class CookieHandler {
 
 
     public String generateCookieSessionId(HttpExchange httpExchange){
-        return cookieService.generateCookieSessionId(httpExchange, SESSION_COOKIE_NAME);
+        return cookieService.generateCookieSessionIdAndAddToResponse(httpExchange, SESSION_COOKIE_NAME);
     }
 }
