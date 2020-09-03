@@ -26,14 +26,10 @@ public class CookieService {
 
     public boolean isCookieIsActive(String cookieSessionId) {
         List<Cookie> cookies = cookieDAO.getObjects(new Entry("session_id", cookieSessionId));
-        if(cookies.size() != 0){
-            Cookie cookie =  cookies.get(0);
-            Date currentDate = getCurrentDate();
-            if((cookie.getExpireDate().getTime() - currentDate.getTime()) >= 0){
-                return true;
-            }
-        }
-        return false;
+        if(cookies.size() == 0) return false;
+        Cookie cookie =  cookies.get(0);
+        Date currentDate = getCurrentDate();
+        return (cookie.getExpireDate().getTime() - currentDate.getTime()) >= 0;
     }
 
     public Date getCurrentDate() {
@@ -50,8 +46,7 @@ public class CookieService {
     public String formatTime(Date date){
         String pattern = "dd/MM/yyyy HH:mm:ss";
         DateFormat dateFormat = new SimpleDateFormat(pattern);
-        String dateString = dateFormat.format(date);
-        return dateString;
+        return dateFormat.format(date);
     }
 
     public void setCookieNewExpireDate(String cookieSessionId) {
@@ -74,7 +69,7 @@ public class CookieService {
         cookieDAO.insert(cookie);
     }
 
-    public String generateCookieSessionId(HttpExchange httpExchange, String sessionCookieName) {
+    public String generateCookieSessionIdAndAddToResponse(HttpExchange httpExchange, String sessionCookieName) {
         UUID uuid = UUID.randomUUID();
         HttpCookie cookie = new HttpCookie(sessionCookieName, uuid.toString());
         httpExchange.getResponseHeaders().add("Set-Cookie", cookie.toString());

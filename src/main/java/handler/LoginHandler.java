@@ -66,6 +66,7 @@ public class LoginHandler implements HttpHandler {
 
                 cookieHandler.addCookie(user.getId(), cookieSessionId);
 
+
                 redirectToUserSpecificPage(httpExchange);
             } else {
                 getResponse("templates/loginpage.twig", true, httpExchange);
@@ -74,6 +75,10 @@ public class LoginHandler implements HttpHandler {
         if (method.equals("GET")) {
             getResponse("templates/loginpage.twig", false, httpExchange);
         }
+        if(method.equals("POST")) {
+            getResponse("templates/loginpage.twig", true, httpExchange);
+        }
+
     }
 
     private void redirectToUserSpecificPage(HttpExchange httpExchange) throws IOException {
