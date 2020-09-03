@@ -16,6 +16,14 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+/**
+ * The LoginServiceTest check for different cases when user is fetching
+ * and checking . Cases of entering a present and absent user in the database
+ * as well as entering an incorrect username and password have been tested.
+ * Tests cover 100% of the code from the tested class.
+ *
+ * The code refactor contained only a small code extension that was meant to be testable.
+ */
 @ExtendWith(MockitoExtension.class)
 class LoginServiceTest {
     private String password = "jasio";
