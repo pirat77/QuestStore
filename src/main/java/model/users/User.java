@@ -1,5 +1,7 @@
 package model.users;
 
+import java.util.Objects;
+
 public class User {
     private int id;
     private String login;
@@ -69,5 +71,25 @@ public class User {
 
     public void setUserTypeId(int userTypeId) {
         this.userTypeId = userTypeId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return getId() == user.getId() &&
+                isActive() == user.isActive() &&
+                getLogin().equals(user.getLogin()) &&
+                getPassword().equals(user.getPassword()) &&
+                getFirstName().equals(user.getFirstName()) &&
+                getLastName().equals(user.getLastName()) &&
+                getStudentId().equals(user.getStudentId()) &&
+                getUserTypeId().equals(user.getUserTypeId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getLogin(), getPassword(), getFirstName(), getLastName(), getStudentId(), isActive(), getUserTypeId());
     }
 }

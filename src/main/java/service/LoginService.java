@@ -14,10 +14,18 @@ public class LoginService {
         this.userDAO = new UserDAO();
     }
 
+    LoginService(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
+
     static public LoginService getInstance(){
         if (loginServiceInstance != null) return loginServiceInstance;
         else loginServiceInstance = new LoginService();
         return loginServiceInstance;
+    }
+
+    static public LoginService getTestInstance(UserDAO userDAO) {
+        return new LoginService(userDAO);
     }
 
     public boolean checkUser(String login, String password) {
@@ -35,5 +43,4 @@ public class LoginService {
         User user = userDAO.getObjects(new Entry("login", login)).get(0);
         return user;
     }
-
 }
